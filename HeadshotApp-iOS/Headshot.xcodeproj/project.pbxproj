@@ -22,7 +22,8 @@
 		B944C7901BF4579A0066E000 /* ListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C78E1BF4579A0066E000 /* ListView.xib */; };
 		B944C7931BF457B00066E000 /* View3.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944C7911BF457B00066E000 /* View3.swift */; };
 		B944C7941BF457B00066E000 /* View3.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C7921BF457B00066E000 /* View3.xib */; };
-		B944C79B1BF55FEA0066E000 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = B944C79A1BF55FEA0066E000 /* Keys.plist */; };
+		D79B5CBC1C0D198D00C8EB85 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D79B5CBB1C0D198D00C8EB85 /* Keys.plist */; };
+		D79B5CBE1C0D199B00C8EB85 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D79B5CBD1C0D199B00C8EB85 /* Keys.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,8 +66,9 @@
 		B944C78E1BF4579A0066E000 /* ListView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListView.xib; sourceTree = "<group>"; };
 		B944C7911BF457B00066E000 /* View3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View3.swift; sourceTree = "<group>"; };
 		B944C7921BF457B00066E000 /* View3.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View3.xib; sourceTree = "<group>"; };
-		B944C79A1BF55FEA0066E000 /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
 		D598B11454A178D8B0598B7F /* Pods-Headshot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Headshot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Headshot/Pods-Headshot.debug.xcconfig"; sourceTree = "<group>"; };
+		D79B5CBB1C0D198D00C8EB85 /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
+		D79B5CBD1C0D199B00C8EB85 /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,7 +152,8 @@
 				B944C7501BF3074D0066E000 /* LaunchScreen.storyboard */,
 				B944C7531BF3074D0066E000 /* Info.plist */,
 				B944C74B1BF3074C0066E000 /* Headshot.xcdatamodeld */,
-				B944C79A1BF55FEA0066E000 /* Keys.plist */,
+				D79B5CBD1C0D199B00C8EB85 /* Keys.plist */,
+				D79B5CBB1C0D198D00C8EB85 /* Keys.plist */,
 			);
 			path = Headshot;
 			sourceTree = "<group>";
@@ -280,7 +283,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B944C79B1BF55FEA0066E000 /* Keys.plist in Resources */,
+				D79B5CBE1C0D199B00C8EB85 /* Keys.plist in Resources */,
+				D79B5CBC1C0D198D00C8EB85 /* Keys.plist in Resources */,
 				B944C7521BF3074D0066E000 /* LaunchScreen.storyboard in Resources */,
 				B944C74F1BF3074D0066E000 /* Assets.xcassets in Resources */,
 				B944C7941BF457B00066E000 /* View3.xib in Resources */,

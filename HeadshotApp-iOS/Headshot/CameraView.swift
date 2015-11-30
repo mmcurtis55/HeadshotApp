@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import Social
 
 
 class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
@@ -16,13 +17,47 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     var stillImageOutput : AVCaptureStillImageOutput?
     var previewLayer : AVCaptureVideoPreviewLayer?
     @IBOutlet var cameraView: UIView!
+    var xBtn : UIButton!
+    var saveBtn : UIButton!
+    var shareBtn : UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        //x button
+        xBtn = UIButton(type: UIButtonType.Custom) as UIButton
+        xBtn.setImage(UIImage(named: "X"), forState: .Normal)
+        xBtn.frame = CGRectMake(12, 12, 22, 22)
+        xBtn.addTarget(self, action: "Xpressed:", forControlEvents: .TouchUpInside)
+        
+        
+        
+        let screenSize = UIScreen.mainScreen().bounds
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        
+        //save button
+        saveBtn = UIButton(type: UIButtonType.Custom) as UIButton
+        saveBtn.setImage(UIImage(named: "Save"), forState: .Normal)
+        saveBtn.frame = CGRectMake(screenWidth - 80, screenHeight - 30, 25, 20)
+        saveBtn.addTarget(self, action: "savePhoto:", forControlEvents: .TouchUpInside)
+        
+        //share button
+        shareBtn = UIButton(type: UIButtonType.Custom) as UIButton
+        shareBtn.setImage(UIImage(named: "Share"), forState: .Normal)
+        shareBtn.frame = CGRectMake(screenWidth - 40, screenHeight - 40, 25 , 30)
+        shareBtn.addTarget(self, action: "sharePhoto:", forControlEvents: .TouchUpInside)
+        
+        
+        self.view.addSubview(xBtn)
+        self.view.addSubview(saveBtn)
+        self.view.addSubview(shareBtn)
     }
     
+    func Xpressed(sender: UIButton){
+        print("ho boy")
+        didPressTakeAnother(true)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -122,13 +157,16 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     var didTakePhoto = Bool()
     
-    func didPressTakeAnother(){
-        if didTakePhoto == true{
+    func didPressTakeAnother(x :Bool){
+        
+        
+        if didTakePhoto == true && x {  // if x is pressed and if the photo is displayed as still image
+            print("tap 1")
             tempImageView.hidden = true
             didTakePhoto = false
             
-        }
-        else{
+        }else if !didTakePhoto && !x { // if main screen was pressed and if the screen is dynamic video
+            print("tap 2")
             captureSession?.startRunning()
             didTakePhoto = true
             didPressTakePhoto()
@@ -139,11 +177,47 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         print("Touches")
-        didPressTakeAnother()
+        didPressTakeAnother(false)
     }
     
-
-
+    
+    @IBAction func sharePhoto(sender: AnyObject) {
+        
+        print("share Photo")
+        
+        let facebookPost = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+        facebookPost.completionHandler = {
+            result in
+            switch result {
+            case SLComposeViewControllerResult.Cancelled:
+                //Code to deal with it being cancelled
+                break
+                
+            case SLComposeViewControllerResult.Done:
+                //Code here to deal with it being completed
+                break
+            }
+        }
+        
+        facebookPost.setInitialText("Test Facebook") //The default text in the tweet
+        facebookPost.addImage(tempImageView.image!) //Add an image
+        facebookPost.addURL(NSURL(string: "http://facebook.com")) //A url which takes you into safari if tapped on
+        
+        self.presentViewController(facebookPost, animated: false, completion: {
+            //Optional completion statement
+        })
+    }
+    
+    
+    func savePhoto(sender: UIButton){
+        print("saved Photo")
+        if didTakePhoto {
+            // UIImageWriteToSavedPhotosAlbum(tempImageView.image!, self, "image:didFinishSavingWithError:contextInfo:", nil)
+            UIImageWriteToSavedPhotosAlbum(tempImageView.image!, self, nil, nil)
+            
+        }
+        
+    }
     
     
     
