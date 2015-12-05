@@ -1,6 +1,7 @@
 package com.example.frank_eltank.headshot;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,8 +10,11 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -77,12 +81,18 @@ public class CameraActivity extends Activity {
         });
 
         mButtonShare = (Button) findViewById(R.id.button_share);
+        mButtonShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareHeadshot();
+            }
+        });
 
         mButtonSave = (Button) findViewById(R.id.button_save);
         mButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveJPEG();
+                saveHeadshot();
             }
         });
     }
@@ -106,10 +116,33 @@ public class CameraActivity extends Activity {
     }
 
     /***
+     * shareHeadshot
+     */
+    private void shareHeadshot(){
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH){
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mPictureFile.getAbsolutePath()));
+            startActivity(Intent.createChooser(shareIntent, "Share Headshot"));
+            makeToast("Android Kitkat- Share");
+        }
+        else{
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            Uri fileUri = FileProvider.getUriForFile(getApplicationContext(), "com.myfileprovider", mPictureFile);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            startActivity(Intent.createChooser(shareIntent, "Share Headshot"));
+            makeToast("Android Lollipop+ Share");
+        }
+    }
+
+    /***
      * Saves a JPEG of the base picture taken
      * TODO: Possible optimization needed to process overlay in parallel
      */
-    private void saveJPEG(){
+    private void saveHeadshot(){
         if(mPictureData == null){
             makeToast("Picture data was not saved!");
             return;
@@ -124,7 +157,7 @@ public class CameraActivity extends Activity {
         }
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        mPictureFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".png");
+        mPictureFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpeg");
 
         if (mPictureFile == null) {
             makeToast("Could not create file");
@@ -161,7 +194,7 @@ public class CameraActivity extends Activity {
         } catch (IOException e) {
             makeToast("Unable to save image data!");
         }
-        makeToast("Headshot Saved!");
+        makeToast("Headshot Saved!\n" + mPictureFile.getAbsolutePath());
 
         MediaScannerConnection.scanFile(this, new String[]{mPictureFile.toString()}, null, null);
     }
@@ -257,6 +290,18 @@ public class CameraActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        toggleButtons(false);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        toggleButtons(false);
     }
 
     @Override
