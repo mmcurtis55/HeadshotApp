@@ -2,13 +2,19 @@ package com.example.frank_eltank.headshot;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
@@ -18,29 +24,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera mCamera;
     private String TAG = "Sample Headshot";
 
-    private Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback(){
-        @Override
-        public void onShutter() {
-            Toast.makeText(mContext, "Picture taken!", Toast.LENGTH_SHORT).show();
-            CameraActivity.sPreviewLocked = true;
-        }
-    };
-
-    private Camera.PictureCallback mRawCallback = new Camera.PictureCallback(){
-        @Override
-        public void onPictureTaken(byte[] bytes, Camera camera) {
-
-        }
-    };
-
-    private Camera.PictureCallback mJPEGCallback = new Camera.PictureCallback(){
-        @Override
-        public void onPictureTaken(byte[] bytes, Camera camera) {
-
-        }
-    };
-
-    public CameraPreview(Context context, Camera camera) {
+    /***
+     * Public Constructor
+     * @param context
+     * @param camera
+     */
+    public CameraPreview(Context context, final CameraActivity activity, Camera camera) {
         super(context);
         mContext = context;
         mCamera = camera;
@@ -52,19 +41,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mHolder.setKeepScreenOn(true);
-
-        // Taking a picture via tap gesture
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Callbacks available to pass to this function are in the following order:
-                // shutter - callback for image capture moment
-                // raw - callback for raw (uncompressed) image data
-                // postview - callback with postview image data
-                // jpeg - callback for JPEG image data
-                mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
-            }
-        });
     }
 
     // ***** Callbacks for SurfaceHolder.Callback *****
