@@ -17,9 +17,10 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     var stillImageOutput : AVCaptureStillImageOutput?
     var previewLayer : AVCaptureVideoPreviewLayer?
     @IBOutlet var cameraView: UIView!
-    var xBtn : UIButton!
-    var saveBtn : UIButton!
-    var shareBtn : UIButton!
+    @IBOutlet var xBtn : UIButton!
+    @IBOutlet var saveBtn : UIButton!
+    @IBOutlet var shareBtn : UIButton!
+    @IBOutlet var flashBtn : UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,7 +81,8 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
         
         let videoDevices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
-        var captureDevice:AVCaptureDevice  = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        if (AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) != nil){
+         var captureDevice:AVCaptureDevice  = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
         
         for device in videoDevices{
             let device = device as! AVCaptureDevice
@@ -121,7 +123,9 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             
         }
         
-        
+        }else{
+            print("No camera")
+        }
     }
     @IBOutlet var tempImageView: UIImageView!
     
