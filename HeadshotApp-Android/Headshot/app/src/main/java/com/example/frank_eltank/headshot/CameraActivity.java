@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
@@ -23,9 +22,7 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -56,88 +53,10 @@ public class CameraActivity extends Activity {
     private byte[] mPictureData;
     private File mPictureFile;
 
-    private void makeToast(String message){
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
-    /**
-     * Calculate the optimal size of camera preview
-     * @param sizes
-     * @param w
-     * @param h
-     * @return
-     */
-    private Camera.Size getOptimalSize(List<Camera.Size> sizes, int w, int h) {
-
-        final double ASPECT_TOLERANCE = 0.2;
-        double targetRatio = (double) w / h;
-        if (sizes == null)
-            return null;
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-        int targetHeight = h;
-        // Try to find an size match aspect ratio and size
-        for (Camera.Size size : sizes)
-        {
-//          Log.d("CameraActivity", "Checking size " + size.width + "w " + size.height + "h");
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-                continue;
-            if (Math.abs(size.height - targetHeight) < minDiff)
-            {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
-            }
-        }
-        // Cannot find the one match the aspect ratio, ignore the requirement
-
-        if (optimalSize == null)
-        {
-            minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff)
-                {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
-                }
-            }
-        }
-
-        SharedPreferences previewSizePref;
-        previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
-
-        SharedPreferences.Editor prefEditor = previewSizePref.edit();
-        prefEditor.putInt("width", optimalSize.width);
-        prefEditor.putInt("height", optimalSize.height);
-
-        prefEditor.commit();
-
-//      Log.d("CameraActivity", "Using size: " + optimalSize.width + "w " + optimalSize.height + "h");
-        return optimalSize;
-    }
-
-    /** A safe way to get an instance of the Camera object. */
-    private Camera getCameraInstance(){
-        Camera c = null;
-        try {
-            c = Camera.open(1); // attempt to get a Camera instance
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-        }
-        c.setDisplayOrientation(90);
-        Camera.Parameters params = c.getParameters();
-        params.setRotation(270);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        Camera.Size optimalSize = getOptimalSize(params.getSupportedPreviewSizes(), size.x, size.y);
-        params.setPreviewSize(optimalSize.width, optimalSize.height);
-        params.setPictureSize(optimalSize.width, optimalSize.height);
-        c.setParameters(params);
-        return c; // returns null if camera is unavailable
-    }
+    // ****************************************************
+    // ***** UI Initialization and Behavior Functions *****
+    // ****************************************************
 
     /***
      * Initializes the Cancel, Share, Save buttons
@@ -149,7 +68,7 @@ public class CameraActivity extends Activity {
             public void onClick(View view) {
                 mCamera.startPreview();
                 mPreviewLocked = false;
-                toggleButtons(false);
+                togglePreviewUI(false);
                 mPictureData = null;
             }
         });
@@ -180,7 +99,6 @@ public class CameraActivity extends Activity {
                 // postview - callback with postview image data
                 // jpeg - callback for JPEG image data
                 mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
-                showSavedCrouton();
             }
         });
 
@@ -189,18 +107,20 @@ public class CameraActivity extends Activity {
 
     /***
      * Toggles the visibilty of the Cancel, Share, Save buttons
-     * @param show: true to show, false to hide
+     * @param previewMode: true to show only shutter button, false to show save/share/cancel buttons
      */
-    private void toggleButtons(boolean show){
-        if(show){
-            mButtonCancel.setVisibility(View.VISIBLE);
-            mButtonShare.setVisibility(View.VISIBLE);
-            mButtonSave.setVisibility(View.VISIBLE);
-        }
-        else{
+    private void togglePreviewUI(boolean previewMode){
+        if(previewMode){
             mButtonCancel.setVisibility(View.INVISIBLE);
             mButtonShare.setVisibility(View.INVISIBLE);
             mButtonSave.setVisibility(View.INVISIBLE);
+            mButtonShutter.setVisibility(View.VISIBLE);
+        }
+        else{
+            mButtonCancel.setVisibility(View.VISIBLE);
+            mButtonShare.setVisibility(View.VISIBLE);
+            mButtonSave.setVisibility(View.VISIBLE);
+            mButtonShutter.setVisibility(View.INVISIBLE);
         }
         mFrame.requestLayout();
     }
@@ -285,6 +205,7 @@ public class CameraActivity extends Activity {
             newImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
+            showSavedCrouton();
         } catch (FileNotFoundException e) {
             makeToast("File not found!");
         } catch (IOException e) {
@@ -294,14 +215,83 @@ public class CameraActivity extends Activity {
         MediaScannerConnection.scanFile(this, new String[]{mPictureFile.toString()}, null, null);
     }
 
-    /***
-     * Shows a Crouton (a toast like message that slides from the top of the screen)
-     * indicating the photo was saved
+
+    // ****************************************************
+    // ***************** Camera Functions *****************
+    // ****************************************************
+
+    /**
+     * Calculate the optimal size of camera preview
+     * @param sizes
+     * @param w
+     * @param h
+     * @return
      */
-    private void showSavedCrouton(){
-        mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
-        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
-        mSavedBanner.startAnimation(slideDown);
+    private Camera.Size getOptimalSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.2;
+        double targetRatio = (double) w / h;
+        if (sizes == null)
+            return null;
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+        int targetHeight = h;
+        // Try to find an size match aspect ratio and size
+        for (Camera.Size size : sizes)
+        {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                continue;
+            if (Math.abs(size.height - targetHeight) < minDiff)
+            {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null)
+        {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff)
+                {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        SharedPreferences previewSizePref;
+        previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
+
+        SharedPreferences.Editor prefEditor = previewSizePref.edit();
+        prefEditor.putInt("width", optimalSize.width);
+        prefEditor.putInt("height", optimalSize.height);
+
+        prefEditor.commit();
+
+        return optimalSize;
+    }
+
+    /** A safe way to get an instance of the Camera object. */
+    private Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open(1); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            // Camera is not available (in use or does not exist)
+        }
+        c.setDisplayOrientation(90);
+        Camera.Parameters params = c.getParameters();
+        params.setRotation(270);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        Camera.Size optimalSize = getOptimalSize(params.getSupportedPreviewSizes(), size.x, size.y);
+        params.setPreviewSize(optimalSize.width, optimalSize.height);
+        params.setPictureSize(optimalSize.width, optimalSize.height);
+        c.setParameters(params);
+        return c; // returns null if camera is unavailable
     }
 
     /***
@@ -311,7 +301,7 @@ public class CameraActivity extends Activity {
         @Override
         public void onShutter() {
             mPreviewLocked = true;
-            toggleButtons(true);
+            togglePreviewUI(false);
         }
     };
 
@@ -335,6 +325,38 @@ public class CameraActivity extends Activity {
         }
     };
 
+
+    // ****************************************************
+    // ************* Helper/Utility Functions *************
+    // ****************************************************
+
+    /***
+     * Toast helper function
+     * @param message: The message to toast
+     */
+    private void makeToast(String message){
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    /***
+     * Shows a Crouton (a toast like message that slides from the top of the screen)
+     * indicating the photo was saved
+     */
+    private void showSavedCrouton(){
+        mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
+        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        mSavedBanner.startAnimation(slideDown);
+    }
+
+    // ****************************************************
+    // ********** Application Behavior Functions **********
+    // ****************************************************
+
+    /***
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -385,13 +407,13 @@ public class CameraActivity extends Activity {
     @Override
     protected void onStop(){
         super.onStop();
-        toggleButtons(false);
+        togglePreviewUI(true);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        toggleButtons(false);
+        togglePreviewUI(true);
     }
 
     @Override
@@ -401,8 +423,7 @@ public class CameraActivity extends Activity {
         if(mPreviewLocked){
             mCamera.startPreview();
             mPreviewLocked = false;
-            toggleButtons(false);
-
+            togglePreviewUI(true);
         }
         else{
             super.onBackPressed();
