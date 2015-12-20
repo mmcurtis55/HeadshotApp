@@ -2,25 +2,30 @@ package com.example.frank_eltank.headshot;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -29,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class CameraActivity extends Activity {
@@ -40,42 +46,29 @@ public class CameraActivity extends Activity {
     private Button mButtonShare;
     private Button mButtonSave;
     private Button mButtonCancel;
+    private Button mButtonShutter;
+    private RelativeLayout mSavedBanner;
     private boolean mPreviewLocked = false;
 
     private byte[] mPictureData;
     private File mPictureFile;
 
-    private void makeToast(String message){
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
 
-    /** A safe way to get an instance of the Camera object. */
-    private Camera getCameraInstance(){
-        Camera c = null;
-        try {
-            c = Camera.open(1); // attempt to get a Camera instance
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-        }
-        c.setDisplayOrientation(90);
-        Camera.Parameters params = c.getParameters();
-        params.setRotation(270);
-        c.setParameters(params);
-        return c; // returns null if camera is unavailable
-    }
+    // ****************************************************
+    // ***** UI Initialization and Behavior Functions *****
+    // ****************************************************
 
     /***
      * Initializes the Cancel, Share, Save buttons
      */
-    private void initButtons(){
+    private void initUI(){
         mButtonCancel = (Button) findViewById(R.id.button_cancel);
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCamera.startPreview();
                 mPreviewLocked = false;
-                toggleButtons(false);
+                togglePreviewUI(false);
                 mPictureData = null;
             }
         });
@@ -95,22 +88,39 @@ public class CameraActivity extends Activity {
                 saveHeadshot();
             }
         });
+
+        mButtonShutter = (Button) findViewById(R.id.button_shutter);
+        mButtonShutter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Callbacks available to pass to this function are in the following order:
+                // shutter - callback for image capture moment
+                // raw - callback for raw (uncompressed) image data
+                // postview - callback with postview image data
+                // jpeg - callback for JPEG image data
+                mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+            }
+        });
+
+        mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
     }
 
     /***
      * Toggles the visibilty of the Cancel, Share, Save buttons
-     * @param show: true to show, false to hide
+     * @param previewMode: true to show only shutter button, false to show save/share/cancel buttons
      */
-    private void toggleButtons(boolean show){
-        if(show){
-            mButtonCancel.setVisibility(View.VISIBLE);
-            mButtonShare.setVisibility(View.VISIBLE);
-            mButtonSave.setVisibility(View.VISIBLE);
-        }
-        else{
+    private void togglePreviewUI(boolean previewMode){
+        if(previewMode){
             mButtonCancel.setVisibility(View.INVISIBLE);
             mButtonShare.setVisibility(View.INVISIBLE);
             mButtonSave.setVisibility(View.INVISIBLE);
+            mButtonShutter.setVisibility(View.VISIBLE);
+        }
+        else{
+            mButtonCancel.setVisibility(View.VISIBLE);
+            mButtonShare.setVisibility(View.VISIBLE);
+            mButtonSave.setVisibility(View.VISIBLE);
+            mButtonShutter.setVisibility(View.INVISIBLE);
         }
         mFrame.requestLayout();
     }
@@ -119,23 +129,29 @@ public class CameraActivity extends Activity {
      * shareHeadshot
      */
     private void shareHeadshot(){
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH){
+        if(mPictureFile == null){
+            saveHeadshot();
+        }
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/*");
+        Uri fileUri = FileProvider.getUriForFile(getApplicationContext(), "com.myfileprovider", mPictureFile);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        startActivity(Intent.createChooser(shareIntent, "Share Headshot"));
+        /*if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT_WATCH){
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/*");
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setType("image*//*");
             shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(mPictureFile.getAbsolutePath()));
             startActivity(Intent.createChooser(shareIntent, "Share Headshot"));
             makeToast("Android Kitkat- Share");
         }
         else{
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/*");
+            shareIntent.setType("image*//*");
             Uri fileUri = FileProvider.getUriForFile(getApplicationContext(), "com.myfileprovider", mPictureFile);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
             startActivity(Intent.createChooser(shareIntent, "Share Headshot"));
             makeToast("Android Lollipop+ Share");
-        }
+        }*/
     }
 
     /***
@@ -189,14 +205,93 @@ public class CameraActivity extends Activity {
             newImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
+            showSavedCrouton();
         } catch (FileNotFoundException e) {
             makeToast("File not found!");
         } catch (IOException e) {
             makeToast("Unable to save image data!");
         }
-        makeToast("Headshot Saved!\n" + mPictureFile.getAbsolutePath());
 
         MediaScannerConnection.scanFile(this, new String[]{mPictureFile.toString()}, null, null);
+    }
+
+
+    // ****************************************************
+    // ***************** Camera Functions *****************
+    // ****************************************************
+
+    /**
+     * Calculate the optimal size of camera preview
+     * @param sizes
+     * @param w
+     * @param h
+     * @return
+     */
+    private Camera.Size getOptimalSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.2;
+        double targetRatio = (double) w / h;
+        if (sizes == null)
+            return null;
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+        int targetHeight = h;
+        // Try to find an size match aspect ratio and size
+        for (Camera.Size size : sizes)
+        {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                continue;
+            if (Math.abs(size.height - targetHeight) < minDiff)
+            {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null)
+        {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff)
+                {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        SharedPreferences previewSizePref;
+        previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
+
+        SharedPreferences.Editor prefEditor = previewSizePref.edit();
+        prefEditor.putInt("width", optimalSize.width);
+        prefEditor.putInt("height", optimalSize.height);
+
+        prefEditor.commit();
+
+        return optimalSize;
+    }
+
+    /** A safe way to get an instance of the Camera object. */
+    private Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open(1); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            // Camera is not available (in use or does not exist)
+        }
+        c.setDisplayOrientation(90);
+        Camera.Parameters params = c.getParameters();
+        params.setRotation(270);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        Camera.Size optimalSize = getOptimalSize(params.getSupportedPreviewSizes(), size.x, size.y);
+        params.setPreviewSize(optimalSize.width, optimalSize.height);
+        params.setPictureSize(optimalSize.width, optimalSize.height);
+        c.setParameters(params);
+        return c; // returns null if camera is unavailable
     }
 
     /***
@@ -205,9 +300,8 @@ public class CameraActivity extends Activity {
     public Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback(){
         @Override
         public void onShutter() {
-            makeToast("Picture Taken!");
             mPreviewLocked = true;
-            toggleButtons(true);
+            togglePreviewUI(false);
         }
     };
 
@@ -231,13 +325,45 @@ public class CameraActivity extends Activity {
         }
     };
 
+
+    // ****************************************************
+    // ************* Helper/Utility Functions *************
+    // ****************************************************
+
+    /***
+     * Toast helper function
+     * @param message: The message to toast
+     */
+    private void makeToast(String message){
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    /***
+     * Shows a Crouton (a toast like message that slides from the top of the screen)
+     * indicating the photo was saved
+     */
+    private void showSavedCrouton(){
+        mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
+        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        mSavedBanner.startAnimation(slideDown);
+    }
+
+    // ****************************************************
+    // ********** Application Behavior Functions **********
+    // ****************************************************
+
+    /***
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
         // Initialize Buttons
-        initButtons();
+        initUI();
 
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -254,20 +380,6 @@ public class CameraActivity extends Activity {
 
         SurfaceView mView = (SurfaceView) findViewById(R.id.overlay);
         mView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        //mFrame.setBackgroundResource(R.drawable.suit_nd);
-
-        // Taking a picture via tap gesture
-        mPreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Callbacks available to pass to this function are in the following order:
-                // shutter - callback for image capture moment
-                // raw - callback for raw (uncompressed) image data
-                // postview - callback with postview image data
-                // jpeg - callback for JPEG image data
-                mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
-            }
-        });
     }
 
     @Override
@@ -295,21 +407,23 @@ public class CameraActivity extends Activity {
     @Override
     protected void onStop(){
         super.onStop();
-        toggleButtons(false);
+        togglePreviewUI(true);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        toggleButtons(false);
+        togglePreviewUI(true);
     }
 
     @Override
     public void onBackPressed(){
+        // We don't want to exit the app when the view is of the taken picture.
+        // but rather clear the picture and the UI buttons
         if(mPreviewLocked){
             mCamera.startPreview();
             mPreviewLocked = false;
-            toggleButtons(false);
+            togglePreviewUI(true);
         }
         else{
             super.onBackPressed();
