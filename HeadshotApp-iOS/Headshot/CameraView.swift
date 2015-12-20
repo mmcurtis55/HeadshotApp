@@ -21,43 +21,41 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet var saveBtn : UIButton!
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
+    @IBOutlet var captureBtn : UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //x button
-        xBtn = UIButton(type: UIButtonType.Custom) as UIButton
-        xBtn.setImage(UIImage(named: "X"), forState: .Normal)
-        xBtn.frame = CGRectMake(12, 12, 22, 22)
-        xBtn.addTarget(self, action: "Xpressed:", forControlEvents: .TouchUpInside)
+        xBtn.hidden = true
+        saveBtn.hidden = true
+        saveBtn.hidden = true
+        shareBtn.hidden = true
+        flashBtn.hidden = false
+        captureBtn.hidden = false
         
-        
-        
-        let screenSize = UIScreen.mainScreen().bounds
-        let screenWidth = screenSize.width
-        let screenHeight = screenSize.height
-        
-        //save button
-        saveBtn = UIButton(type: UIButtonType.Custom) as UIButton
-        saveBtn.setImage(UIImage(named: "Save"), forState: .Normal)
-        saveBtn.frame = CGRectMake(screenWidth - 80, screenHeight - 30, 25, 20)
-        saveBtn.addTarget(self, action: "savePhoto:", forControlEvents: .TouchUpInside)
-        
-        //share button
-        shareBtn = UIButton(type: UIButtonType.Custom) as UIButton
-        shareBtn.setImage(UIImage(named: "Share"), forState: .Normal)
-        shareBtn.frame = CGRectMake(screenWidth - 40, screenHeight - 40, 25 , 30)
-        shareBtn.addTarget(self, action: "sharePhoto:", forControlEvents: .TouchUpInside)
-        
-        
-        self.view.addSubview(xBtn)
-        self.view.addSubview(saveBtn)
-        self.view.addSubview(shareBtn)
+
     }
     
-    func Xpressed(sender: UIButton){
-        print("ho boy")
+    @IBAction func xPressed(sender: UIButton){
+        print("Release")
+        xBtn.hidden = true
+        saveBtn.hidden = true
+        saveBtn.hidden = true
+        shareBtn.hidden = true
+        flashBtn.hidden = false
+        captureBtn.hidden = false
         didPressTakeAnother(true)
+    }
+    
+    @IBAction func capturePressed(sender: UIButton){
+        print("Capture")
+        xBtn.hidden = false
+        saveBtn.hidden = false
+        saveBtn.hidden = false
+        shareBtn.hidden = false
+        flashBtn.hidden = true
+        captureBtn.hidden = true
+        didPressTakeAnother(false)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -179,13 +177,13 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        print("Touches")
-        didPressTakeAnother(false)
-    }
+//    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+//        print("Touches")
+//        didPressTakeAnother(false)
+//    }
     
     
-    @IBAction func sharePhoto(sender: AnyObject) {
+    @IBAction func sharePhoto(sender: UIButton) {
         
         print("share Photo")
         
@@ -213,17 +211,25 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     }
     
     
-    func savePhoto(sender: UIButton){
+    @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        if didTakePhoto {
-            // UIImageWriteToSavedPhotosAlbum(tempImageView.image!, self, "image:didFinishSavingWithError:contextInfo:", nil)
-            UIImageWriteToSavedPhotosAlbum(tempImageView.image!, self, nil, nil)
-            
-        }
+        
+
+        if let image = tempImageView.image {
+            UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
+
+        } else { print("some error message") }
         
     }
     
-    
-    
+    func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo:UnsafePointer<Void>) {
+        if error == nil {
+            
+        }
+        else
+        {
+            //log the error out here ,if any
+        }
+    }
     
 }

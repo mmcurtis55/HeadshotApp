@@ -22,7 +22,6 @@
 		B944C7901BF4579A0066E000 /* ListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C78E1BF4579A0066E000 /* ListView.xib */; };
 		B944C7931BF457B00066E000 /* View3.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944C7911BF457B00066E000 /* View3.swift */; };
 		B944C7941BF457B00066E000 /* View3.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C7921BF457B00066E000 /* View3.xib */; };
-		D79B5CBC1C0D198D00C8EB85 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D79B5CBB1C0D198D00C8EB85 /* Keys.plist */; };
 		D79B5CBE1C0D199B00C8EB85 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D79B5CBD1C0D199B00C8EB85 /* Keys.plist */; };
 /* End PBXBuildFile section */
 
@@ -242,7 +241,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0720;
 				TargetAttributes = {
 					B944C7401BF3074B0066E000 = {
 						CreatedOnToolsVersion = 7.1;
@@ -284,7 +283,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D79B5CBE1C0D199B00C8EB85 /* Keys.plist in Resources */,
-				D79B5CBC1C0D198D00C8EB85 /* Keys.plist in Resources */,
 				B944C7521BF3074D0066E000 /* LaunchScreen.storyboard in Resources */,
 				B944C74F1BF3074D0066E000 /* Assets.xcassets in Resources */,
 				B944C7941BF457B00066E000 /* View3.xib in Resources */,
@@ -459,7 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -498,7 +496,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -512,11 +510,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -526,11 +526,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
