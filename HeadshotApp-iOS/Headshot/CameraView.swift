@@ -189,11 +189,12 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         print("share Photo")
         
         
-            let textToShare = "Swift is awesome!  Check out this website about it!"
-            
-            if let myWebsite = NSURL(string: "http://www.codingexplorer.com/")
+            let textToShare = "Check out the Headshot app in the App Store"
+        
+            if var image = tempImageView.image
             {
-                let objectsToShare = [textToShare, myWebsite]
+                image = UIImage(CGImage: image.CGImage!, scale: 1.0, orientation: .RightMirrored)
+                let objectsToShare = [textToShare, image]
                 let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 
                 //New Excluded Activities Code
@@ -203,28 +204,6 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                 self.presentViewController(activityVC, animated: true, completion: nil)
             }
         
-        
-//        let facebookPost = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-//        facebookPost.completionHandler = {
-//            result in
-//            switch result {
-//            case SLComposeViewControllerResult.Cancelled:
-//                //Code to deal with it being cancelled
-//                break
-//                
-//            case SLComposeViewControllerResult.Done:
-//                //Code here to deal with it being completed
-//                break
-//            }
-//        }
-//        
-//        facebookPost.setInitialText("Test Facebook") //The default text in the tweet
-//        facebookPost.addImage(tempImageView.image!) //Add an image
-//        facebookPost.addURL(NSURL(string: "http://facebook.com")) //A url which takes you into safari if tapped on
-//        
-//        self.presentViewController(facebookPost, animated: false, completion: {
-//            //Optional completion statement
-//        })
     }
     
     
