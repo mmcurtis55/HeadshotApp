@@ -22,6 +22,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
+    @IBOutlet var savedBan : UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +33,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         shareBtn.hidden = true
         flashBtn.hidden = false
         captureBtn.hidden = false
-        
+        savedBan.hidden = true
 
     }
     
@@ -187,33 +188,49 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
         print("share Photo")
         
-        let facebookPost = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
-        facebookPost.completionHandler = {
-            result in
-            switch result {
-            case SLComposeViewControllerResult.Cancelled:
-                //Code to deal with it being cancelled
-                break
+        
+            let textToShare = "Swift is awesome!  Check out this website about it!"
+            
+            if let myWebsite = NSURL(string: "http://www.codingexplorer.com/")
+            {
+                let objectsToShare = [textToShare, myWebsite]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 
-            case SLComposeViewControllerResult.Done:
-                //Code here to deal with it being completed
-                break
+                //New Excluded Activities Code
+                activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+                //
+                
+                self.presentViewController(activityVC, animated: true, completion: nil)
             }
-        }
         
-        facebookPost.setInitialText("Test Facebook") //The default text in the tweet
-        facebookPost.addImage(tempImageView.image!) //Add an image
-        facebookPost.addURL(NSURL(string: "http://facebook.com")) //A url which takes you into safari if tapped on
         
-        self.presentViewController(facebookPost, animated: false, completion: {
-            //Optional completion statement
-        })
+//        let facebookPost = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+//        facebookPost.completionHandler = {
+//            result in
+//            switch result {
+//            case SLComposeViewControllerResult.Cancelled:
+//                //Code to deal with it being cancelled
+//                break
+//                
+//            case SLComposeViewControllerResult.Done:
+//                //Code here to deal with it being completed
+//                break
+//            }
+//        }
+//        
+//        facebookPost.setInitialText("Test Facebook") //The default text in the tweet
+//        facebookPost.addImage(tempImageView.image!) //Add an image
+//        facebookPost.addURL(NSURL(string: "http://facebook.com")) //A url which takes you into safari if tapped on
+//        
+//        self.presentViewController(facebookPost, animated: false, completion: {
+//            //Optional completion statement
+//        })
     }
     
     
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        
+        savedBan.hidden = false
 
         if let image = tempImageView.image {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
