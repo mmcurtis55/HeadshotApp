@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 import Social
+import CWStatusBarNotification
 
 
 class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
@@ -23,6 +24,9 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
     @IBOutlet var savedBan : UIImageView!
+    
+    //for saved notification
+     let notification = CWStatusBarNotification()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,10 +127,13 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
         
         }else{
+            tempImageView.image = UIImage(named: "iTunesArtwork.png")
             print("No camera")
         }
     }
+    
     @IBOutlet var tempImageView: UIImageView!
+     var composit: UIImage!
     
     
     func didPressTakePhoto(){
@@ -148,13 +155,29 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                     self.tempImageView.image = image
                     self.tempImageView.hidden = false
                     
+                            let bottomImage = self.tempImageView.image!
+                            let topImage = UIImage(named: "SuitND.png")
+                    
+                    
+                            let size = CGSize(width: 300, height: 400)
+                            UIGraphicsBeginImageContext(size)
+                    
+                            let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+                            bottomImage.drawInRect(areaSize)
+                    
+                            topImage!.drawInRect(areaSize, blendMode: .Normal, alpha: 1.0)
+                            
+                            
+                            self.composit = UIGraphicsGetImageFromCurrentImageContext()
+                            UIGraphicsEndImageContext()
+                    
                 }
                 
                 
             })
         }
         
-        
+
     }
     
     
@@ -202,7 +225,9 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                 //
                 
                 self.presentViewController(activityVC, animated: true, completion: nil)
-            }
+            }else{
+            print("no image to save")
+        }
         
     }
     
@@ -211,10 +236,10 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         print("saved Photo")
         savedBan.hidden = false
 
-        if let image = tempImageView.image {
+        if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
 
-        } else { print("some error message") }
+        } else { print("Image save error: No image to save") }
         
     }
     
@@ -224,6 +249,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
         else
         {
+            print("Error saving Image")
             //log the error out here ,if any
         }
     }

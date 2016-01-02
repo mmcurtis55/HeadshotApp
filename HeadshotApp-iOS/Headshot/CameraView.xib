@@ -85,7 +85,7 @@
                         <action selector="capturePressed:" destination="-1" eventType="touchUpInside" id="U2E-xI-PHn"/>
                     </connections>
                 </button>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="SavedBanner" translatesAutoresizingMaskIntoConstraints="NO" id="6G1-dK-sQQ">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SavedBanner" translatesAutoresizingMaskIntoConstraints="NO" id="6G1-dK-sQQ">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="29"/>
                 </imageView>
             </subviews>
@@ -98,6 +98,7 @@
                 <constraint firstAttribute="trailing" secondItem="2x5-hn-g8j" secondAttribute="trailing" id="9Nz-Qi-XO5"/>
                 <constraint firstItem="pWq-ju-Jo7" firstAttribute="trailing" secondItem="X0b-R1-5VH" secondAttribute="trailing" id="AEJ-sI-ufq"/>
                 <constraint firstItem="2x5-hn-g8j" firstAttribute="leading" secondItem="pct-ym-weZ" secondAttribute="leading" id="BJd-gG-3dB"/>
+                <constraint firstItem="6G1-dK-sQQ" firstAttribute="top" secondItem="E6T-do-xSU" secondAttribute="top" id="MBj-dq-JEz"/>
                 <constraint firstItem="xbM-iB-yBJ" firstAttribute="leading" secondItem="1R0-QN-HhQ" secondAttribute="leading" id="RJ2-7q-iIB"/>
                 <constraint firstItem="1R0-QN-HhQ" firstAttribute="top" secondItem="pWq-ju-Jo7" secondAttribute="top" id="TDf-hx-2Hg"/>
                 <constraint firstItem="2x5-hn-g8j" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="VAp-fK-27P"/>
@@ -106,8 +107,11 @@
                 <constraint firstItem="1R0-QN-HhQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="do8-NJ-RPF"/>
                 <constraint firstAttribute="bottom" secondItem="E6T-do-xSU" secondAttribute="bottom" id="eNs-NO-5mu"/>
                 <constraint firstAttribute="bottom" secondItem="xbM-iB-yBJ" secondAttribute="bottom" constant="21" id="gVN-xD-6Ie"/>
+                <constraint firstItem="2x5-hn-g8j" firstAttribute="top" secondItem="6G1-dK-sQQ" secondAttribute="bottom" constant="60" id="gnA-Rb-oio"/>
                 <constraint firstItem="1R0-QN-HhQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="kHb-Kq-guX"/>
                 <constraint firstItem="E6T-do-xSU" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="kLK-J8-xEc"/>
+                <constraint firstItem="6G1-dK-sQQ" firstAttribute="leading" secondItem="E6T-do-xSU" secondAttribute="leading" id="mGx-Ft-oNm"/>
+                <constraint firstItem="6G1-dK-sQQ" firstAttribute="trailing" secondItem="pct-ym-weZ" secondAttribute="trailing" id="oZQ-7i-Qb4"/>
                 <constraint firstItem="E6T-do-xSU" firstAttribute="trailing" secondItem="2x5-hn-g8j" secondAttribute="trailing" id="rUb-FP-O9Y"/>
                 <constraint firstItem="xbM-iB-yBJ" firstAttribute="bottom" secondItem="X0b-R1-5VH" secondAttribute="bottom" id="rYO-lN-QV8"/>
                 <constraint firstItem="Jh1-Cd-UUO" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottomMargin" id="uAo-wr-JTj"/>

@@ -22,6 +22,8 @@
 		B944C7901BF4579A0066E000 /* ListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C78E1BF4579A0066E000 /* ListView.xib */; };
 		B944C7931BF457B00066E000 /* View3.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944C7911BF457B00066E000 /* View3.swift */; };
 		B944C7941BF457B00066E000 /* View3.xib in Resources */ = {isa = PBXBuildFile; fileRef = B944C7921BF457B00066E000 /* View3.xib */; };
+		B9AA91911C377267000D040E /* CWStatusBarNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9AA918F1C377267000D040E /* CWStatusBarNotification.swift */; };
+		B9AA91921C377267000D040E /* CWStatusBarNotificationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9AA91901C377267000D040E /* CWStatusBarNotificationUtils.swift */; };
 		D79B5CBE1C0D199B00C8EB85 /* Keys.plist in Resources */ = {isa = PBXBuildFile; fileRef = D79B5CBD1C0D199B00C8EB85 /* Keys.plist */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +67,8 @@
 		B944C78E1BF4579A0066E000 /* ListView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListView.xib; sourceTree = "<group>"; };
 		B944C7911BF457B00066E000 /* View3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View3.swift; sourceTree = "<group>"; };
 		B944C7921BF457B00066E000 /* View3.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View3.xib; sourceTree = "<group>"; };
+		B9AA918F1C377267000D040E /* CWStatusBarNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotification.swift; sourceTree = "<group>"; };
+		B9AA91901C377267000D040E /* CWStatusBarNotificationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CWStatusBarNotificationUtils.swift; sourceTree = "<group>"; };
 		D598B11454A178D8B0598B7F /* Pods-Headshot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Headshot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Headshot/Pods-Headshot.debug.xcconfig"; sourceTree = "<group>"; };
 		D79B5CBB1C0D198D00C8EB85 /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
 		D79B5CBD1C0D199B00C8EB85 /* Keys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Keys.plist; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 		B944C7431BF3074B0066E000 /* Headshot */ = {
 			isa = PBXGroup;
 			children = (
+				B9AA918F1C377267000D040E /* CWStatusBarNotification.swift */,
+				B9AA91901C377267000D040E /* CWStatusBarNotificationUtils.swift */,
 				B944C7441BF3074B0066E000 /* AppDelegate.swift */,
 				B944C7461BF3074B0066E000 /* ViewController.swift */,
 				B944C7481BF3074C0066E000 /* Main.storyboard */,
@@ -361,9 +367,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9AA91921C377267000D040E /* CWStatusBarNotificationUtils.swift in Sources */,
 				B944C7471BF3074B0066E000 /* ViewController.swift in Sources */,
 				B944C78B1BF457740066E000 /* CameraView.swift in Sources */,
 				B944C78F1BF4579A0066E000 /* ListView.swift in Sources */,
+				B9AA91911C377267000D040E /* CWStatusBarNotification.swift in Sources */,
 				B944C7451BF3074B0066E000 /* AppDelegate.swift in Sources */,
 				B944C7931BF457B00066E000 /* View3.swift in Sources */,
 				B944C74D1BF3074D0066E000 /* Headshot.xcdatamodeld in Sources */,
@@ -517,6 +525,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Debug;
 		};
@@ -533,6 +542,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
 		};
