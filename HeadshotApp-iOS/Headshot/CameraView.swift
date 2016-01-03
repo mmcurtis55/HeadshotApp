@@ -23,7 +23,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
-    @IBOutlet var savedBan : UIImageView!
+    
     
     //for saved notification
      let notification = CWStatusBarNotification()
@@ -37,7 +37,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         shareBtn.hidden = true
         flashBtn.hidden = false
         captureBtn.hidden = false
-        savedBan.hidden = true
+        
 
     }
     
@@ -158,8 +158,12 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
                             let bottomImage = self.tempImageView.image!
                             let topImage = UIImage(named: "SuitND.png")
                     
+                    let screenSize: CGRect = UIScreen.mainScreen().bounds
                     
-                            let size = CGSize(width: 300, height: 400)
+                    let screenWidth = screenSize.width
+                    let screenHeight = screenSize.height
+                    
+                            let size = CGSize(width: screenWidth, height: screenHeight)
                             UIGraphicsBeginImageContext(size)
                     
                             let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
@@ -214,9 +218,9 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
             let textToShare = "Check out the Headshot app in the App Store"
         
-            if var image = tempImageView.image
+            if let image = composit
             {
-                image = UIImage(CGImage: image.CGImage!, scale: 1.0, orientation: .RightMirrored)
+                //image = UIImage(CGImage: image.CGImage!, scale: 1.0, orientation: .RightMirrored)
                 let objectsToShare = [textToShare, image]
                 let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
                 
@@ -234,7 +238,11 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        savedBan.hidden = false
+        setupNotification()
+        self.notification.notificationLabelBackgroundColor = UIColor(red: 0.0,
+            green: 122.0/255.0, blue: 0.5, alpha: 1.0)
+        self.notification.displayNotificationWithMessage("Photo Saved", forDuration: 1.0)
+        
 
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
@@ -253,5 +261,25 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
             //log the error out here ,if any
         }
     }
+    
+    func setupNotification() {
+        guard let inStyle = CWNotificationAnimationStyle(rawValue:
+           0) else {
+                return
+        }
+        guard let outStyle = CWNotificationAnimationStyle(rawValue:
+            0) else {
+                return
+        }
+        guard let notificationStyle = CWNotificationStyle(rawValue:
+            0) else {
+                return
+        }
+        self.notification.notificationAnimationInStyle = inStyle
+        self.notification.notificationAnimationOutStyle = outStyle
+        self.notification.notificationStyle = notificationStyle
+    }
+
+
     
 }
