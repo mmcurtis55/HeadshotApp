@@ -73,6 +73,9 @@
                         <constraint firstAttribute="width" constant="24" id="zdz-GX-TNY"/>
                     </constraints>
                     <state key="normal" image="flash_on"/>
+                    <connections>
+                        <action selector="flashPressed:" destination="-1" eventType="touchUpInside" id="hiT-nl-L9m"/>
+                    </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jh1-Cd-UUO">
                     <rect key="frame" x="261" y="514" width="78" height="78"/>

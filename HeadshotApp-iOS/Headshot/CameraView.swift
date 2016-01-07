@@ -11,22 +11,32 @@ import AVFoundation
 import Social
 import CWStatusBarNotification
 
+enum Flash {
+    case Flash
+    case NoFlash
+}
 
 class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     var captureSession : AVCaptureSession?
     var stillImageOutput : AVCaptureStillImageOutput?
     var previewLayer : AVCaptureVideoPreviewLayer?
+    //dynamic image display
     @IBOutlet var cameraView: UIView!
+    
+    // Buttons
     @IBOutlet var xBtn : UIButton!
     @IBOutlet var saveBtn : UIButton!
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
     
+    var isFlash:Bool = true
+    
     
     //for saved notification
      let notification = CWStatusBarNotification()
+    let defaults = NSUserDefaults.standardUserDefaults()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +48,28 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         flashBtn.hidden = false
         captureBtn.hidden = false
         
+        isFlash = defaults.boolForKey("flashState")
+        
+        
+        
 
+
+    }
+    
+
+    
+     @IBAction func flashPressed(sender: UIButton){
+
+        if(isFlash){
+            flashBtn.setImage(UIImage(named: "flash_off"), forState: .Normal)
+            defaults.setBool(false, forKey: "flashState")
+
+        }else{
+            flashBtn.setImage(UIImage(named: "flash_on"), forState: .Normal)
+            defaults.setBool(true, forKey: "flashState")
+        }
+        
+        
     }
     
     @IBAction func xPressed(sender: UIButton){
@@ -132,7 +163,10 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
+    //still image
     @IBOutlet var tempImageView: UIImageView!
+    
+    //image + overlay combo
      var composit: UIImage!
     
     
@@ -205,12 +239,9 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
     }
     
-//    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        print("Touches")
-//        didPressTakeAnother(false)
-//    }
     
     
+    //Shares photo and text
     @IBAction func sharePhoto(sender: UIButton) {
         
         print("share Photo")
@@ -235,7 +266,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         
     }
     
-    
+    //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
         setupNotification()
