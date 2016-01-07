@@ -9,12 +9,8 @@
 import UIKit
 import AVFoundation
 import Social
-import CWStatusBarNotification
 
-enum Flash {
-    case Flash
-    case NoFlash
-}
+
 
 class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
@@ -34,8 +30,6 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     var isFlash:Bool = true
     
     
-    //for saved notification
-     let notification = CWStatusBarNotification()
     let defaults = NSUserDefaults.standardUserDefaults()
     
     override func viewDidLoad() {
@@ -269,10 +263,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
     //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        setupNotification()
-        self.notification.notificationLabelBackgroundColor = UIColor(red: 0.0,
-            green: 122.0/255.0, blue: 0.5, alpha: 1.0)
-        self.notification.displayNotificationWithMessage("Photo Saved", forDuration: 1.0)
+
         
 
         if let image = composit {
@@ -293,23 +284,7 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
-    func setupNotification() {
-        guard let inStyle = CWNotificationAnimationStyle(rawValue:
-           0) else {
-                return
-        }
-        guard let outStyle = CWNotificationAnimationStyle(rawValue:
-            0) else {
-                return
-        }
-        guard let notificationStyle = CWNotificationStyle(rawValue:
-            0) else {
-                return
-        }
-        self.notification.notificationAnimationInStyle = inStyle
-        self.notification.notificationAnimationOutStyle = outStyle
-        self.notification.notificationStyle = notificationStyle
-    }
+
 
 
     
