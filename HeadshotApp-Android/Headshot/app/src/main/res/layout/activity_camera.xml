@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
@@ -16,6 +17,12 @@
         android:layout_height="fill_parent"
         android:background="@drawable/suit_nd"/>
 
+    <SurfaceView
+        android:id="@+id/overlay_flash"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white"
+        android:visibility="invisible"/>
 
     <RelativeLayout
         android:id="@+id/banner_saved"
@@ -59,13 +66,20 @@
         android:visibility="invisible"/>
 
     <Button
+        android:id="@+id/button_flash"
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:background="@drawable/flash_off"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp" />
+
+    <Button
         android:id="@+id/button_shutter"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="@drawable/shutter"
+        android:layout_width="fill_parent"
+        android:layout_height="108dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="75dp"
-        android:layout_centerInParent="true"
-        android:gravity="center_vertical"/>
+        android:gravity="bottom"/>
 
 </RelativeLayout>

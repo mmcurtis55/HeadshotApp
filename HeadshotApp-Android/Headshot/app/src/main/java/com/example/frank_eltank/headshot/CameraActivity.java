@@ -6,21 +6,31 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.GestureDetectorCompat;
+import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -41,18 +51,24 @@ public class CameraActivity extends Activity {
 
     private Camera mCamera;
     private CameraPreview mPreview;
-    private FrameLayout mFrame;
+    private DrawablesCircularArray mCutouts;
 
+    // Handles to UI elements
+    private RelativeLayout mContainer;
+    private FrameLayout mFrame;
+    private SurfaceView mCutoutView;
     private Button mButtonShare;
     private Button mButtonSave;
     private Button mButtonCancel;
     private Button mButtonShutter;
+    private Button mButtonFlash;
     private RelativeLayout mSavedBanner;
-    private boolean mPreviewLocked = false;
 
+    private boolean mPreviewLocked = false;
+    private boolean mFlashOn = false;
+    private float mBrightness = 0.0f;
     private byte[] mPictureData;
     private File mPictureFile;
-
 
     // ****************************************************
     // ***** UI Initialization and Behavior Functions *****
@@ -62,14 +78,18 @@ public class CameraActivity extends Activity {
      * Initializes the Cancel, Share, Save buttons
      */
     private void initUI(){
+        mContainer = (RelativeLayout) findViewById(R.id.container);
         mButtonCancel = (Button) findViewById(R.id.button_cancel);
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCamera.startPreview();
                 mPreviewLocked = false;
-                togglePreviewUI(false);
+                togglePreviewUI(true);
                 mPictureData = null;
+                if(mFlashOn){
+                    cleanupArtificialFlash();
+                }
             }
         });
 
@@ -85,24 +105,59 @@ public class CameraActivity extends Activity {
         mButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showSavedCrouton();
                 saveHeadshot();
             }
         });
 
         mButtonShutter = (Button) findViewById(R.id.button_shutter);
+        mButtonShutter.setBackgroundColor(Color.argb(0,255,255,255));
         mButtonShutter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(mFlashOn){
+                    runArtificialFlash();
+                    makeToast("Artificial Flashing");
+                }
                 // Callbacks available to pass to this function are in the following order:
                 // shutter - callback for image capture moment
                 // raw - callback for raw (uncompressed) image data
                 // postview - callback with postview image data
                 // jpeg - callback for JPEG image data
-                mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                final Handler handler = new Handler();
+
+                final Runnable r = new Runnable() {
+                    public void run() {
+                        mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                    }
+                };
+
+                handler.postDelayed(r, 800);
+            }
+        });
+
+        mButtonFlash = (Button) findViewById(R.id.button_flash);
+        mButtonFlash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleFlash(mFlashOn);
+                mFlashOn = !mFlashOn;
+                // Save current brightness
+                mBrightness = getWindow().getAttributes().screenBrightness;
+                if(mBrightness <0){
+                    try {
+                        mBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+                    } catch (Settings.SettingNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                makeToast("Current Brightness: " + mBrightness);
             }
         });
 
         mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
+        SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+        flashOverlay.setBackgroundColor(Color.argb(125,255,255,255));
     }
 
     /***
@@ -115,14 +170,36 @@ public class CameraActivity extends Activity {
             mButtonShare.setVisibility(View.INVISIBLE);
             mButtonSave.setVisibility(View.INVISIBLE);
             mButtonShutter.setVisibility(View.VISIBLE);
+            mButtonFlash.setVisibility(View.VISIBLE);
         }
         else{
             mButtonCancel.setVisibility(View.VISIBLE);
             mButtonShare.setVisibility(View.VISIBLE);
             mButtonSave.setVisibility(View.VISIBLE);
             mButtonShutter.setVisibility(View.INVISIBLE);
+            mButtonFlash.setVisibility(View.INVISIBLE);
         }
-        mFrame.requestLayout();
+        mContainer.requestLayout();
+    }
+
+    /***
+     * Toggles the flash UI element look and
+     * the flash logic behind
+     * @param flashToggled - TRUE if flash is currently ON
+     */
+    private void toggleFlash(boolean flashToggled){
+        if(flashToggled){
+            mButtonFlash.setBackgroundResource(R.drawable.flash_off);
+            if(hasFrontFlash()){
+                mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
+        }
+        else{
+            mButtonFlash.setBackgroundResource(R.drawable.flash_on);
+            if(hasFrontFlash()){
+                mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            }
+        }
     }
 
     /***
@@ -205,13 +282,11 @@ public class CameraActivity extends Activity {
             newImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
-            showSavedCrouton();
         } catch (FileNotFoundException e) {
             makeToast("File not found!");
         } catch (IOException e) {
             makeToast("Unable to save image data!");
         }
-
         MediaScannerConnection.scanFile(this, new String[]{mPictureFile.toString()}, null, null);
     }
 
@@ -295,6 +370,65 @@ public class CameraActivity extends Activity {
     }
 
     /***
+     * WARNING - This function is lazy and does not check
+     * for valid front facing camera ID. It assumes the
+     * mCamera instance is for the front facing camera
+     */
+    private boolean hasFrontFlash(){
+        if(mCamera == null){
+            return false;
+        }
+        Camera.Parameters params = mCamera.getParameters();
+        List<String> flashModes = params.getSupportedFlashModes();
+
+        return flashModes.contains(Camera.Parameters.FLASH_MODE_ON);
+    }
+
+    /***
+     * Sets the screen to a white background and
+     * increases brightness to maximum to create
+     * an artificial flash
+     */
+    private void runArtificialFlash(){
+        Window window = getWindow();
+
+        // Enable white background flash overlay
+        SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+        flashOverlay.setVisibility(View.VISIBLE);
+
+        // Get current brightness
+        try {
+            mBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Settings.SettingNotFoundException e) {
+            makeToast("Brightness not available");
+            e.printStackTrace();
+        }
+
+        //Set the system brightness using the brightness variable value
+        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 100);
+        WindowManager.LayoutParams layoutpars = window.getAttributes();
+        //Set the brightness of this window
+        layoutpars.screenBrightness = 100 / (float)100;
+        window.setAttributes(layoutpars);
+        mContainer.requestLayout();
+    }
+
+    /***
+     * Clear white flash overlay and
+     * readjust screen brightness to user's previous brightness
+     */
+    private void cleanupArtificialFlash(){
+        Window window = getWindow();
+
+        //Set the system brightness using the brightness variable value
+        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, (int) mBrightness);
+        WindowManager.LayoutParams layoutpars = window.getAttributes();
+        //Set the brightness of this window
+        layoutpars.screenBrightness = mBrightness / 100;
+        window.setAttributes(layoutpars);
+    }
+
+    /***
      * Callback when the picture is taken
      */
     public Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback(){
@@ -311,7 +445,6 @@ public class CameraActivity extends Activity {
     private Camera.PictureCallback mRawCallback = new Camera.PictureCallback(){
         @Override
         public void onPictureTaken(byte[] bytes, Camera camera) {
-
         }
     };
 
@@ -322,6 +455,15 @@ public class CameraActivity extends Activity {
         @Override
         public void onPictureTaken(byte[] bytes, Camera camera) {
             mPictureData = bytes.clone();
+
+            //TODO: Needs evaluating
+            // Kind of a hack to work around a bug I could not figure out
+            // For some reason when I run my artificial flash, the CameraPreview (mPreview)
+            // would not have the flash in the
+            Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+            SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+            //flashOverlay.setBackground(image);
+            flashOverlay.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -378,8 +520,25 @@ public class CameraActivity extends Activity {
             mFrame.addView(mPreview);
         }
 
-        SurfaceView mView = (SurfaceView) findViewById(R.id.overlay);
-        mView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        mCutoutView = (SurfaceView) findViewById(R.id.overlay);
+        mCutoutView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+
+        mCutouts = new DrawablesCircularArray();
+
+        // Enable cutout swiping
+        mCutoutView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()){
+            @Override
+            public void onSwipeRight(){
+                mCutoutView.setBackgroundResource(mCutouts.getNextDrawable());
+                super.onSwipeRight();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                mCutoutView.setBackgroundResource(mCutouts.getPreviousDrawable());
+                super.onSwipeLeft();
+            }
+        });
     }
 
     @Override
@@ -424,6 +583,9 @@ public class CameraActivity extends Activity {
             mCamera.startPreview();
             mPreviewLocked = false;
             togglePreviewUI(true);
+            if(mFlashOn){
+                cleanupArtificialFlash();
+            }
         }
         else{
             super.onBackPressed();
