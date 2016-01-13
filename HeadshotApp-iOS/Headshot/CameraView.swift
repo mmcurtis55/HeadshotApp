@@ -284,6 +284,10 @@ class CameraView: UIViewController, UIImagePickerControllerDelegate, UINavigatio
         }
     }
     
+    func saveBanner(){
+        
+    }
+    
 
 
 
