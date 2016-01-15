@@ -11,7 +11,14 @@ import AVFoundation
 import Social
 
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
+    
+    @IBOutlet var scrollView: UIScrollView!
+
+    
+    var pageImages: [UIImage] = []
+    var pageViews: [UIImageView?] = []
+
     
     var captureSession : AVCaptureSession?
     var stillImageOutput : AVCaptureStillImageOutput?
@@ -25,6 +32,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
+    @IBOutlet var savedBan : UIImageView!
     
     var isFlash:Bool = true
     
@@ -34,12 +42,52 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //scrollView
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        
+        scrollView.bounds = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
+        
+        
+        // 1
+        pageImages = [UIImage(named:"SuitND.png")!,
+            UIImage(named:"SuitND.png")!,
+            UIImage(named:"SuitND.png")!,
+            UIImage(named:"SuitND.png")!,
+            UIImage(named:"SuitND.png")!]
+        
+        let pageCount = pageImages.count
+        
+        // 2
+        //pageControl.currentPage = 0
+        //pageControl.numberOfPages = pageCount
+        
+        // 3
+        for _ in 0..<pageCount {
+            pageViews.append(nil)
+        }
+        
+        // 4
+        
+        
+        let pagesScrollViewSize = scrollView.frame.size
+        scrollView.contentSize = CGSizeMake(screenSize.width * CGFloat(pageImages.count), pagesScrollViewSize.height)
+        
+        
+        // 5
+        loadVisiblePages()
+        loadVisiblePages()
+        loadVisiblePages()
+        
         xBtn.hidden = true
         saveBtn.hidden = true
         saveBtn.hidden = true
         shareBtn.hidden = true
         flashBtn.hidden = false
         captureBtn.hidden = false
+        self.savedBan.hidden = true
         
         isFlash = defaults.boolForKey("flashState")
         
@@ -73,6 +121,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareBtn.hidden = true
         flashBtn.hidden = false
         captureBtn.hidden = false
+        scrollView.scrollEnabled = true
+        savedBan.hidden = true
         didPressTakeAnother(true)
     }
     
@@ -84,6 +134,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareBtn.hidden = false
         flashBtn.hidden = true
         captureBtn.hidden = true
+        scrollView.scrollEnabled = false
         didPressTakeAnother(false)
     }
     override func didReceiveMemoryWarning() {
@@ -262,8 +313,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        
-        
+        self.savedBan.hidden = false
+        //saveBanner()
         
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
@@ -283,8 +334,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
+
+    
     func saveBanner(){
-        
+        UIView.animateWithDuration(1.0, delay: 1.0, options: .CurveEaseOut, animations: {
+            self.savedBan.hidden = false
+            }, completion: { finished in
+                self.savedBan.hidden = true
+                print("Basket doors opened!")
+        })
     }
     
 
@@ -294,6 +352,84 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
 
+    func loadPage(page: Int) {
+        
+        if page < 0 || page >= pageImages.count {
+            // If it's outside the range of what you have to display, then do nothing
+            return
+        }
+        
+        // 1
+        if let _ = pageViews[page] {
+            // Do nothing. The view is already loaded.
+        } else {
+            // 2
+            var frame = scrollView.bounds
+            frame.origin.x = frame.size.width * CGFloat(page)
+            frame.origin.y = 0.0
+            
+            // 3
+            let newPageView = UIImageView(image: pageImages[page])
+            newPageView.contentMode = .ScaleAspectFit
+            newPageView.frame = frame
+            scrollView.addSubview(newPageView)
+            
+            // 4
+            pageViews[page] = newPageView
+        }
+    }
+    
+    func purgePage(page: Int) {
+        
+        if page < 0 || page >= pageImages.count {
+            // If it's outside the range of what you have to display, then do nothing
+            return
+        }
+        
+        // Remove a page from the scroll view and reset the container array
+        if let pageView = pageViews[page] {
+            pageView.removeFromSuperview()
+            pageViews[page] = nil
+        }
+        
+    }
+    
+    func loadVisiblePages() {
+        
+        // First, determine which page is currently visible
+        let pageWidth = scrollView.frame.size.width
+        let page = Int(floor((scrollView.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
+        
+        // Update the page control
+        //pageControl.currentPage = page
+        
+        // Work out which pages you want to load
+        let firstPage = page - 1
+        let lastPage = page + 1
+        
+        
+        // Purge anything before the first page
+        for var index = 0; index < firstPage; ++index {
+            purgePage(index)
+        }
+        
+        // Load pages in our range
+        for var index = firstPage; index <= lastPage; ++index {
+            loadPage(index)
+        }
+        
+        // Purge anything after the last page
+        for var index = lastPage+1; index < pageImages.count; ++index {
+            purgePage(index)
+        }
+    }
+    
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        // Load the pages that are now on screen
+        loadVisiblePages()
+    }
+    
 
 
 }
