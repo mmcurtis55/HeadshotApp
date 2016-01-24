@@ -18,6 +18,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
+    var currentPage: Int?
 
     
     var captureSession : AVCaptureSession?
@@ -32,7 +33,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var shareBtn : UIButton!
     @IBOutlet var flashBtn : UIButton!
     @IBOutlet var captureBtn : UIButton!
-    @IBOutlet var savedBan : UIImageView!
+    
     
     var isFlash:Bool = true
     
@@ -52,11 +53,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         // 1
-        pageImages = [UIImage(named:"SuitND.png")!,
+        pageImages = [UIImage(named:"family_of_mice_co.png")!,
             UIImage(named:"SuitND.png")!,
+            UIImage(named:"family_of_mice_co.png")!,
             UIImage(named:"SuitND.png")!,
-            UIImage(named:"SuitND.png")!,
-            UIImage(named:"SuitND.png")!]
+            UIImage(named:"family_of_mice_co.png")!]
+        currentPage = 0
         
         let pageCount = pageImages.count
         
@@ -78,8 +80,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // 5
         loadVisiblePages()
-        loadVisiblePages()
-        loadVisiblePages()
         
         xBtn.hidden = true
         saveBtn.hidden = true
@@ -87,7 +87,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         shareBtn.hidden = true
         flashBtn.hidden = false
         captureBtn.hidden = false
-        self.savedBan.hidden = true
+        
         
         isFlash = defaults.boolForKey("flashState")
         
@@ -122,7 +122,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         flashBtn.hidden = false
         captureBtn.hidden = false
         scrollView.scrollEnabled = true
-        savedBan.hidden = true
+        
         didPressTakeAnother(true)
     }
     
@@ -213,6 +213,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //image + overlay combo
     var composit: UIImage!
     
+
+    
     
     func didPressTakePhoto(){
         
@@ -233,25 +235,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.tempImageView.image = image
                     self.tempImageView.hidden = false
                     
-                    let bottomImage = self.tempImageView.image!
-                    let topImage = UIImage(named: "SuitND.png")
-                    
-                    let screenSize: CGRect = UIScreen.mainScreen().bounds
-                    
-                    let screenWidth = screenSize.width
-                    let screenHeight = screenSize.height
-                    
-                    let size = CGSize(width: screenWidth, height: screenHeight)
-                    UIGraphicsBeginImageContext(size)
-                    
-                    let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-                    bottomImage.drawInRect(areaSize)
-                    
-                    topImage!.drawInRect(areaSize, blendMode: .Normal, alpha: 1.0)
                     
                     
-                    self.composit = UIGraphicsGetImageFromCurrentImageContext()
-                    UIGraphicsEndImageContext()
                     
                 }
                 
@@ -259,6 +244,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             })
         }
         
+        
+    }
+    
+    func createComposit(){
+        let bottomImage = self.tempImageView.image!
+        let topImage = self.pageImages[self.currentPage!+1]
+        
+        let screenSize: CGRect = UIScreen.mainScreen().bounds
+        
+        let screenWidth = screenSize.width
+        let screenHeight = screenSize.height
+        
+        let size = CGSize(width: screenWidth, height: screenHeight)
+        UIGraphicsBeginImageContext(size)
+        
+        let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        bottomImage.drawInRect(areaSize)
+        
+        topImage.drawInRect(areaSize, blendMode: .Normal, alpha: 1.0)
+        
+        
+        self.composit = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
         
     }
     
@@ -292,6 +300,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         let textToShare = "Check out the Headshot app in the App Store"
+        self.createComposit()
         
         if let image = composit
         {
@@ -313,8 +322,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
         print("saved Photo")
-        self.savedBan.hidden = false
-        //saveBanner()
+        
+        self.createComposit()
         
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
@@ -336,16 +345,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
 
     
-    func saveBanner(){
-        UIView.animateWithDuration(1.0, delay: 1.0, options: .CurveEaseOut, animations: {
-            self.savedBan.hidden = false
-            }, completion: { finished in
-                self.savedBan.hidden = true
-                print("Basket doors opened!")
-        })
-    }
     
-
     
     override func prefersStatusBarHidden() -> Bool {
         return true

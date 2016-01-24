@@ -105,7 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				B944C7431BF3074B0066E000 /* Headshot */,
-				B944C75B1BF3074F0066E000 /* HeadshotTests */,
 				B944C7661BF3074F0066E000 /* HeadshotUITests */,
 				B944C7421BF3074B0066E000 /* Products */,
 				34076D7EE51D8B745B88129E /* Pods */,
@@ -134,6 +133,7 @@
 				B944C7531BF3074D0066E000 /* Info.plist */,
 				B944C74B1BF3074C0066E000 /* Headshot.xcdatamodeld */,
 				D79B5CBD1C0D199B00C8EB85 /* Keys.plist */,
+				B944C75B1BF3074F0066E000 /* HeadshotTests */,
 				D79B5CBB1C0D198D00C8EB85 /* Keys.plist */,
 			);
 			path = Headshot;
@@ -146,7 +146,7 @@
 				B944C75E1BF3074F0066E000 /* Info.plist */,
 			);
 			path = HeadshotTests;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		B944C7661BF3074F0066E000 /* HeadshotUITests */ = {
 			isa = PBXGroup;
@@ -488,7 +488,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -505,7 +505,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -519,6 +519,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = HeadshotTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.HeadshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -531,6 +532,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = HeadshotTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.HeadshotTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -542,6 +544,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = HeadshotUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.HeadshotUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -554,6 +557,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = HeadshotUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.HeadshotUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
