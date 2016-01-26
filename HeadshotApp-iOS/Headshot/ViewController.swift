@@ -400,6 +400,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let pageWidth = scrollView.frame.size.width
         let page = Int(floor((scrollView.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
         
+        //print("page  \(page)")
+        
+        if page == 0
+        {
+            print("page  \(page)")
+        }
+        
         // Update the page control
         //pageControl.currentPage = page
         
@@ -410,16 +417,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // Purge anything before the first page
         for var index = 0; index < firstPage; ++index {
+            print("index : \(index)")
             purgePage(index)
         }
         
         // Load pages in our range
         for var index = firstPage; index <= lastPage; ++index {
+            print("index :: \(index)")
             loadPage(index)
         }
         
         // Purge anything after the last page
         for var index = lastPage+1; index < pageImages.count; ++index {
+            print("index ::: \(index)")
             purgePage(index)
         }
     }
