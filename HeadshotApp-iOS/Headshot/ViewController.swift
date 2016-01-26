@@ -75,7 +75,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         let pagesScrollViewSize = scrollView.frame.size
-        scrollView.contentSize = CGSizeMake(screenSize.width * CGFloat(pageImages.count), pagesScrollViewSize.height)
+        scrollView.contentSize = CGSizeMake(screenSize.width * CGFloat(pageImages.count+2), pagesScrollViewSize.height)
         
         
         // 5
