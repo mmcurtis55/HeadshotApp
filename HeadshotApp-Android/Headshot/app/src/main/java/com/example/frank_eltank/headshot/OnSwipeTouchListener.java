@@ -1,5 +1,12 @@
 package com.example.frank_eltank.headshot;
 
+/***
+ *
+ * Author: Frank Lin
+ * Email: fylin134@gmail.com
+ *
+ */
+
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -7,6 +14,9 @@ import android.view.View;
 
 /**
  * Created by Frank on 1/10/2016.
+ *
+ *
+ *
  */
 public class OnSwipeTouchListener implements View.OnTouchListener
 {

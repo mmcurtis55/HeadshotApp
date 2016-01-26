@@ -15,7 +15,7 @@
         android:id="@+id/overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/suit_nd"/>
+        android:background="@drawable/family_of_mice_co"/>
 
     <SurfaceView
         android:id="@+id/overlay_flash"

@@ -1,5 +1,12 @@
 package com.example.frank_eltank.headshot;
 
+/***
+ *
+ * Author: Frank Lin
+ * Email: fylin134@gmail.com
+ *
+ */
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,13 +27,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.GestureDetectorCompat;
-import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -46,7 +49,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-
+/***
+ *
+ * This is the main activity class.
+ *
+ * It handles UI and application state behaviors
+ *
+ */
 public class CameraActivity extends Activity {
 
     private Camera mCamera;
@@ -64,8 +73,10 @@ public class CameraActivity extends Activity {
     private Button mButtonFlash;
     private RelativeLayout mSavedBanner;
 
+    // True if the camera preview is paused
     private boolean mPreviewLocked = false;
     private boolean mFlashOn = false;
+    private boolean mShareNoToggleUI = false;
     private float mBrightness = 0.0f;
     private byte[] mPictureData;
     private File mPictureFile;
@@ -117,22 +128,25 @@ public class CameraActivity extends Activity {
             public void onClick(View view) {
                 if(mFlashOn){
                     runArtificialFlash();
-                    makeToast("Artificial Flashing");
+                    // Callbacks available to pass to this function are in the following order:
+                    // shutter - callback for image capture moment
+                    // raw - callback for raw (uncompressed) image data
+                    // postview - callback with postview image data
+                    // jpeg - callback for JPEG image data
+                    final Handler handler = new Handler();
+
+                    final Runnable r = new Runnable() {
+                        public void run() {
+                            mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                        }
+                    };
+
+                    handler.postDelayed(r, 800);
                 }
-                // Callbacks available to pass to this function are in the following order:
-                // shutter - callback for image capture moment
-                // raw - callback for raw (uncompressed) image data
-                // postview - callback with postview image data
-                // jpeg - callback for JPEG image data
-                final Handler handler = new Handler();
+                else{
+                    mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                }
 
-                final Runnable r = new Runnable() {
-                    public void run() {
-                        mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
-                    }
-                };
-
-                handler.postDelayed(r, 800);
             }
         });
 
@@ -151,7 +165,6 @@ public class CameraActivity extends Activity {
                         e.printStackTrace();
                     }
                 }
-                makeToast("Current Brightness: " + mBrightness);
             }
         });
 
@@ -190,15 +203,9 @@ public class CameraActivity extends Activity {
     private void toggleFlash(boolean flashToggled){
         if(flashToggled){
             mButtonFlash.setBackgroundResource(R.drawable.flash_off);
-            if(hasFrontFlash()){
-                mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            }
         }
         else{
             mButtonFlash.setBackgroundResource(R.drawable.flash_on);
-            if(hasFrontFlash()){
-                mCamera.getParameters().setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-            }
         }
     }
 
@@ -209,6 +216,12 @@ public class CameraActivity extends Activity {
         if(mPictureFile == null){
             saveHeadshot();
         }
+
+        // Sharing causes the app to put into PAUSE state which toggles UI
+        // But the UX spec requires the share, save, and X buttons to NOT disappear
+        // when share is tapped
+        mShareNoToggleUI = true;
+
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/*");
         Uri fileUri = FileProvider.getUriForFile(getApplicationContext(), "com.myfileprovider", mPictureFile);
@@ -272,7 +285,7 @@ public class CameraActivity extends Activity {
         canvas.drawBitmap(cameraPostEffects, 0f, 0f, null);
 
         // Draw overlay
-        Drawable overlay = getResources().getDrawable(R.drawable.suit_nd);
+        Drawable overlay = getResources().getDrawable(mCutouts.getCurrentDrawable());
         overlay.setBounds(0,0,cameraPostEffects.getWidth(), cameraPostEffects.getHeight());
         overlay.draw(canvas);
 
@@ -370,21 +383,6 @@ public class CameraActivity extends Activity {
     }
 
     /***
-     * WARNING - This function is lazy and does not check
-     * for valid front facing camera ID. It assumes the
-     * mCamera instance is for the front facing camera
-     */
-    private boolean hasFrontFlash(){
-        if(mCamera == null){
-            return false;
-        }
-        Camera.Parameters params = mCamera.getParameters();
-        List<String> flashModes = params.getSupportedFlashModes();
-
-        return flashModes.contains(Camera.Parameters.FLASH_MODE_ON);
-    }
-
-    /***
      * Sets the screen to a white background and
      * increases brightness to maximum to create
      * an artificial flash
@@ -454,15 +452,12 @@ public class CameraActivity extends Activity {
     private Camera.PictureCallback mJPEGCallback = new Camera.PictureCallback(){
         @Override
         public void onPictureTaken(byte[] bytes, Camera camera) {
+            // Get a copy of the picture byte data
             mPictureData = bytes.clone();
 
-            //TODO: Needs evaluating
-            // Kind of a hack to work around a bug I could not figure out
-            // For some reason when I run my artificial flash, the CameraPreview (mPreview)
-            // would not have the flash in the
+            // Once the JPEG is available, we can turn off the flash overlay
             Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
             SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
-            //flashOverlay.setBackground(image);
             flashOverlay.setVisibility(View.INVISIBLE);
         }
     };
@@ -529,14 +524,18 @@ public class CameraActivity extends Activity {
         mCutoutView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()){
             @Override
             public void onSwipeRight(){
-                mCutoutView.setBackgroundResource(mCutouts.getNextDrawable());
-                super.onSwipeRight();
+                if(!mPreviewLocked){
+                    mCutoutView.setBackgroundResource(mCutouts.getNextDrawable());
+                    super.onSwipeRight();
+                }
             }
 
             @Override
             public void onSwipeLeft() {
-                mCutoutView.setBackgroundResource(mCutouts.getPreviousDrawable());
-                super.onSwipeLeft();
+                if(!mPreviewLocked){
+                    mCutoutView.setBackgroundResource(mCutouts.getPreviousDrawable());
+                    super.onSwipeLeft();
+                }
             }
         });
     }
@@ -572,7 +571,10 @@ public class CameraActivity extends Activity {
     @Override
     protected void onPause(){
         super.onPause();
-        togglePreviewUI(true);
+        if(!mShareNoToggleUI){
+            togglePreviewUI(true);
+        }
+        mShareNoToggleUI = false;
     }
 
     @Override

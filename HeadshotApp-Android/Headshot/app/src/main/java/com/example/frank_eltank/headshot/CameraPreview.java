@@ -1,22 +1,27 @@
 package com.example.frank_eltank.headshot;
 
+/***
+ *
+ * Author: Frank Lin
+ * Email: fylin134@gmail.com
+ *
+ */
+
 import android.content.Context;
 import android.hardware.Camera;
-import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-/** A basic Camera preview class */
+/***
+ *
+ * CameraPreview class. This is what displays what the camera currently sees.
+ *
+ * In addition, all camera functionality is controlled in here
+ *
+ */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     private Context mContext;

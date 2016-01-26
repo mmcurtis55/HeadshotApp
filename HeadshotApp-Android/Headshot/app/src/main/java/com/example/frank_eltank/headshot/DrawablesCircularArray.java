@@ -1,9 +1,23 @@
 package com.example.frank_eltank.headshot;
 
+/***
+ *
+ * Author: Frank Lin
+ * Email: fylin134@gmail.com
+ *
+ */
+
 import java.util.ArrayList;
 
 /**
  * Created by Frank on 1/6/2016.
+ *
+ * This is a helper class in the form of a circular array.
+ *
+ * The circular array is loaded with the cutout drawables' resource ids
+ *
+ * When the OnSwipeTouchListener detects a swipe, it can access this
+ * array to get the next cutout of unending swipes.
  */
 public class DrawablesCircularArray {
 
@@ -12,12 +26,18 @@ public class DrawablesCircularArray {
 
     public DrawablesCircularArray(){
         mDrawables = new ArrayList<Integer>();
+        // TODO: This can definitely be improved somehow
+        // to dynamically load all the available drawables from a separate directory
+        mDrawables.add(R.drawable.family_of_mice_co);
         mDrawables.add(R.drawable.suit_nd);
-        mDrawables.add(R.drawable.placeholder_overlay_blue);
     }
 
     public void addDrawable(int id){
         mDrawables.add(id);
+    }
+
+    public int getCurrentDrawable(){
+        return mDrawables.get(currentCutoutPointer);
     }
 
     public int getPreviousDrawable(){
