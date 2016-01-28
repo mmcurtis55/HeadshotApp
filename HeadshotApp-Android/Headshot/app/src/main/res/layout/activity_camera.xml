@@ -5,11 +5,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <FrameLayout
+    <view xmlns:android="http://schemas.android.com/apk/res/android"
+        class="com.example.frank_eltank.headshot.CameraPreview"
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-    </FrameLayout>
+        android:layout_height="fill_parent"/>
 
     <SurfaceView
         android:id="@+id/overlay"

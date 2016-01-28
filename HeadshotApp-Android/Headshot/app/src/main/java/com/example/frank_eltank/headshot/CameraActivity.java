@@ -58,13 +58,12 @@ import java.util.List;
  */
 public class CameraActivity extends Activity {
 
-    private Camera mCamera;
+    static Camera sCamera;
     private CameraPreview mPreview;
     private DrawablesCircularArray mCutouts;
 
     // Handles to UI elements
     private RelativeLayout mContainer;
-    private FrameLayout mFrame;
     private SurfaceView mCutoutView;
     private Button mButtonShare;
     private Button mButtonSave;
@@ -94,7 +93,7 @@ public class CameraActivity extends Activity {
         mButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCamera.startPreview();
+                sCamera.startPreview();
                 mPreviewLocked = false;
                 togglePreviewUI(true);
                 mPictureData = null;
@@ -137,14 +136,14 @@ public class CameraActivity extends Activity {
 
                     final Runnable r = new Runnable() {
                         public void run() {
-                            mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                            sCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
                         }
                     };
 
                     handler.postDelayed(r, 800);
                 }
                 else{
-                    mCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
+                    sCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
                 }
 
             }
@@ -503,16 +502,14 @@ public class CameraActivity extends Activity {
         initUI();
 
         // Create an instance of Camera
-        mCamera = getCameraInstance();
+        sCamera = getCameraInstance();
 
-        if(mCamera == null){
+        if(sCamera == null){
             makeToast("Camera is null");
         }
         else{
             // Create our Preview view and set it as the content of our activity.
-            mPreview = new CameraPreview(this,this, mCamera);
-            mFrame= (FrameLayout) findViewById(R.id.camera_preview);
-            mFrame.addView(mPreview);
+            mPreview = (CameraPreview) findViewById(R.id.camera_preview);
         }
 
         mCutoutView = (SurfaceView) findViewById(R.id.overlay);
@@ -524,18 +521,18 @@ public class CameraActivity extends Activity {
         mCutoutView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()){
             @Override
             public void onSwipeRight(){
-                if(!mPreviewLocked){
+                //if(!mPreviewLocked){
                     mCutoutView.setBackgroundResource(mCutouts.getNextDrawable());
                     super.onSwipeRight();
-                }
+                //}
             }
 
             @Override
             public void onSwipeLeft() {
-                if(!mPreviewLocked){
+                //if(!mPreviewLocked){
                     mCutoutView.setBackgroundResource(mCutouts.getPreviousDrawable());
                     super.onSwipeLeft();
-                }
+                //}
             }
         });
     }
@@ -582,7 +579,7 @@ public class CameraActivity extends Activity {
         // We don't want to exit the app when the view is of the taken picture.
         // but rather clear the picture and the UI buttons
         if(mPreviewLocked){
-            mCamera.startPreview();
+            sCamera.startPreview();
             mPreviewLocked = false;
             togglePreviewUI(true);
             if(mFlashOn){

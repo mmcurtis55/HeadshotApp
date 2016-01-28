@@ -8,7 +8,7 @@ package com.example.frank_eltank.headshot;
  */
 
 import android.content.Context;
-import android.hardware.Camera;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,18 +26,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private Context mContext;
     private SurfaceHolder mHolder;
-    private Camera mCamera;
     private String TAG = "Sample Headshot";
 
     /***
      * Public Constructor
      * @param context
-     * @param camera
      */
-    public CameraPreview(Context context, final CameraActivity activity, Camera camera) {
-        super(context);
+    public CameraPreview(Context context, AttributeSet attrs) {
+        super(context, attrs);
         mContext = context;
-        mCamera = camera;
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -52,8 +49,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder) {
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
-            mCamera.setPreviewDisplay(holder);
-            mCamera.startPreview();
+            CameraActivity.sCamera.setPreviewDisplay(holder);
+            CameraActivity.sCamera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
         }
@@ -74,7 +71,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // stop preview before making changes
         try {
-            mCamera.stopPreview();
+            CameraActivity.sCamera.stopPreview();
         } catch (Exception e){
             // ignore: tried to stop a non-existent preview
         }
@@ -84,8 +81,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         // start preview with new settings
         try {
-            mCamera.setPreviewDisplay(mHolder);
-            mCamera.startPreview();
+            CameraActivity.sCamera.setPreviewDisplay(mHolder);
+            CameraActivity.sCamera.startPreview();
 
         } catch (Exception e){
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());
