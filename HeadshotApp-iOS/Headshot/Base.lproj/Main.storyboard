@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -41,10 +41,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xul-au-Kpj">
-                                <rect key="frame" x="560" y="557" width="20" height="23"/>
+                                <rect key="frame" x="560" y="557" width="24" height="26"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="23" id="Pwg-xJ-acX"/>
-                                    <constraint firstAttribute="width" constant="20" id="RhW-MR-azk"/>
+                                    <constraint firstAttribute="height" constant="26" id="Pwg-xJ-acX"/>
+                                    <constraint firstAttribute="width" constant="24" id="RhW-MR-azk"/>
                                 </constraints>
                                 <state key="normal" image="Share"/>
                                 <connections>
@@ -52,7 +52,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wuT-6a-oly">
-                                <rect key="frame" x="564" y="30" width="16" height="20"/>
+                                <rect key="frame" x="564" y="40" width="16" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="evp-2g-NMo"/>
                                     <constraint firstAttribute="width" constant="16" id="hzH-81-Fbf"/>
@@ -63,7 +63,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sVO-HZ-Dqc">
-                                <rect key="frame" x="20" y="30" width="16" height="16"/>
+                                <rect key="frame" x="20" y="40" width="16" height="16"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="JHl-SG-bq3"/>
                                     <constraint firstAttribute="width" constant="16" id="X4B-pj-KKd"/>
@@ -74,10 +74,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7FQ-xh-a6w">
-                                <rect key="frame" x="20" y="560" width="20" height="20"/>
+                                <rect key="frame" x="20" y="560" width="24" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="9KZ-0J-QnW"/>
-                                    <constraint firstAttribute="width" constant="20" id="inn-WH-0ZX"/>
+                                    <constraint firstAttribute="width" constant="24" id="inn-WH-0ZX"/>
                                 </constraints>
                                 <state key="normal" image="Save"/>
                                 <connections>
@@ -91,18 +91,18 @@
                             <constraint firstItem="hex-c8-JZO" firstAttribute="leading" secondItem="hhv-1f-Doq" secondAttribute="leading" id="5xs-N6-9Ub"/>
                             <constraint firstItem="hhv-1f-Doq" firstAttribute="bottom" secondItem="vrT-kg-tN6" secondAttribute="top" id="6Mm-qm-3Sj"/>
                             <constraint firstItem="of0-1d-FhQ" firstAttribute="trailing" secondItem="JUB-JU-Os4" secondAttribute="trailing" id="8VV-MS-a0c"/>
-                            <constraint firstItem="Xul-au-Kpj" firstAttribute="bottom" secondItem="7FQ-xh-a6w" secondAttribute="bottom" id="AUq-gQ-BII"/>
+                            <constraint firstItem="Xul-au-Kpj" firstAttribute="bottom" secondItem="7FQ-xh-a6w" secondAttribute="bottom" constant="3" id="AUq-gQ-BII"/>
                             <constraint firstItem="hhv-1f-Doq" firstAttribute="trailing" secondItem="hex-c8-JZO" secondAttribute="trailing" id="Gkm-T2-hRU"/>
                             <constraint firstItem="hex-c8-JZO" firstAttribute="leading" secondItem="JUB-JU-Os4" secondAttribute="leading" id="Iq7-Yk-ZWZ"/>
                             <constraint firstItem="hex-c8-JZO" firstAttribute="bottom" secondItem="vrT-kg-tN6" secondAttribute="top" id="OW5-4t-X8I"/>
                             <constraint firstItem="JUB-JU-Os4" firstAttribute="bottom" secondItem="vrT-kg-tN6" secondAttribute="top" id="Qhf-ZP-jGT"/>
-                            <constraint firstItem="Xul-au-Kpj" firstAttribute="trailing" secondItem="wuT-6a-oly" secondAttribute="trailing" id="Tcf-10-RUS"/>
+                            <constraint firstItem="Xul-au-Kpj" firstAttribute="trailing" secondItem="wuT-6a-oly" secondAttribute="trailing" constant="4" id="Tcf-10-RUS"/>
                             <constraint firstItem="7FQ-xh-a6w" firstAttribute="leading" secondItem="sVO-HZ-Dqc" secondAttribute="leading" id="Umw-el-LoW"/>
                             <constraint firstItem="7FQ-xh-a6w" firstAttribute="leading" secondItem="Sm4-7f-M7h" secondAttribute="leadingMargin" id="VD7-hv-ilT"/>
                             <constraint firstItem="JUB-JU-Os4" firstAttribute="leading" secondItem="of0-1d-FhQ" secondAttribute="leading" id="YFg-cM-KHj"/>
                             <constraint firstAttribute="trailing" secondItem="hex-c8-JZO" secondAttribute="trailing" id="Zhs-a6-WRi"/>
                             <constraint firstItem="hhv-1f-Doq" firstAttribute="top" secondItem="hex-c8-JZO" secondAttribute="top" id="a3r-ZS-qUS"/>
-                            <constraint firstItem="sVO-HZ-Dqc" firstAttribute="top" secondItem="aHL-Wf-bkK" secondAttribute="bottom" constant="10" id="aNw-06-fcg"/>
+                            <constraint firstItem="sVO-HZ-Dqc" firstAttribute="top" secondItem="aHL-Wf-bkK" secondAttribute="bottom" constant="20" id="aNw-06-fcg"/>
                             <constraint firstItem="hex-c8-JZO" firstAttribute="top" secondItem="Sm4-7f-M7h" secondAttribute="top" id="bDs-cI-uUI"/>
                             <constraint firstItem="wuT-6a-oly" firstAttribute="trailing" secondItem="Sm4-7f-M7h" secondAttribute="trailingMargin" id="bi6-Ut-pSM"/>
                             <constraint firstAttribute="bottom" secondItem="7FQ-xh-a6w" secondAttribute="bottom" constant="20" symbolic="YES" id="h8O-7A-9H6"/>
@@ -125,7 +125,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="940" y="-12"/>
+            <point key="canvasLocation" x="638" y="-83"/>
         </scene>
     </scenes>
     <resources>
