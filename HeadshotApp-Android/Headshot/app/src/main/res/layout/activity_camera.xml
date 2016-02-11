@@ -12,25 +12,42 @@
         android:layout_height="fill_parent"/>
 
     <SurfaceView
-        android:id="@+id/overlay"
+        android:id="@+id/overlay1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/family_of_mice_co"/>
+        android:background="@drawable/co_family_of_mice"/>
+
 
     <SurfaceView
+        android:id="@+id/overlay2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="invisible"
+        android:background="@drawable/co_gardenhead"/>
+
+<!--    <SurfaceView
+        android:id="@+id/overlay3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_toRightOf="@id/overlay2"
+        android:background="@drawable/suit_nd"/>-->
+
+
+<!--    <SurfaceView
         android:id="@+id/overlay_flash"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/white"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>-->
 
-    <RelativeLayout
+<!--    <RelativeLayout
         android:id="@+id/banner_saved"
         android:layout_width="fill_parent"
         android:layout_height="25dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="-25dp"
-        android:background="@drawable/savedbanner"/>
+        android:background="@drawable/savedbanner"/>-->
+
 
     <Button
         android:id="@+id/button_save"
@@ -65,7 +82,7 @@
         android:layout_marginTop="15dp"
         android:visibility="invisible"/>
 
-    <Button
+<!--    <Button
         android:id="@+id/button_flash"
         android:layout_width="25dp"
         android:layout_height="30dp"
@@ -73,7 +90,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp" />-->
 
     <Button
         android:id="@+id/button_shutter"

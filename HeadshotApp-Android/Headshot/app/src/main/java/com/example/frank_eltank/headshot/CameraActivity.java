@@ -25,19 +25,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.content.FileProvider;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -64,17 +60,18 @@ public class CameraActivity extends Activity {
 
     // Handles to UI elements
     private RelativeLayout mContainer;
-    private SurfaceView mCutoutView;
+    private SurfaceView mCutoutView1;
+    private SurfaceView mCutoutView2;
     private Button mButtonShare;
     private Button mButtonSave;
     private Button mButtonCancel;
     private Button mButtonShutter;
-    private Button mButtonFlash;
-    private RelativeLayout mSavedBanner;
+    //private Button mButtonFlash;
+    //private RelativeLayout mSavedBanner;
 
     // True if the camera preview is paused
     private boolean mPreviewLocked = false;
-    private boolean mFlashOn = false;
+    //private boolean mFlashOn = false;
     private boolean mShareNoToggleUI = false;
     private float mBrightness = 0.0f;
     private byte[] mPictureData;
@@ -97,9 +94,9 @@ public class CameraActivity extends Activity {
                 mPreviewLocked = false;
                 togglePreviewUI(true);
                 mPictureData = null;
-                if(mFlashOn){
+                /*if(mFlashOn){
                     cleanupArtificialFlash();
-                }
+                }*/
             }
         });
 
@@ -115,7 +112,8 @@ public class CameraActivity extends Activity {
         mButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showSavedCrouton();
+                //showSavedCrouton();
+                makeToast("Saved!");
                 saveHeadshot();
             }
         });
@@ -125,7 +123,7 @@ public class CameraActivity extends Activity {
         mButtonShutter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mFlashOn){
+                /*if(mFlashOn){
                     runArtificialFlash();
                     // Callbacks available to pass to this function are in the following order:
                     // shutter - callback for image capture moment
@@ -142,14 +140,14 @@ public class CameraActivity extends Activity {
 
                     handler.postDelayed(r, 800);
                 }
-                else{
+                else{*/
                     sCamera.takePicture(mShutterCallback, mRawCallback, null, mJPEGCallback);
-                }
+                //}
 
             }
         });
 
-        mButtonFlash = (Button) findViewById(R.id.button_flash);
+        /*mButtonFlash = (Button) findViewById(R.id.button_flash);
         mButtonFlash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,11 +163,11 @@ public class CameraActivity extends Activity {
                     }
                 }
             }
-        });
+        });*/
 
-        mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
-        SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
-        flashOverlay.setBackgroundColor(Color.argb(125,255,255,255));
+        //mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
+        //SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+        //flashOverlay.setBackgroundColor(Color.argb(125,255,255,255));
     }
 
     /***
@@ -182,14 +180,14 @@ public class CameraActivity extends Activity {
             mButtonShare.setVisibility(View.INVISIBLE);
             mButtonSave.setVisibility(View.INVISIBLE);
             mButtonShutter.setVisibility(View.VISIBLE);
-            mButtonFlash.setVisibility(View.VISIBLE);
+            //mButtonFlash.setVisibility(View.VISIBLE);
         }
         else{
             mButtonCancel.setVisibility(View.VISIBLE);
             mButtonShare.setVisibility(View.VISIBLE);
             mButtonSave.setVisibility(View.VISIBLE);
             mButtonShutter.setVisibility(View.INVISIBLE);
-            mButtonFlash.setVisibility(View.INVISIBLE);
+            //mButtonFlash.setVisibility(View.INVISIBLE);
         }
         mContainer.requestLayout();
     }
@@ -201,10 +199,10 @@ public class CameraActivity extends Activity {
      */
     private void toggleFlash(boolean flashToggled){
         if(flashToggled){
-            mButtonFlash.setBackgroundResource(R.drawable.flash_off);
+            //mButtonFlash.setBackgroundResource(R.drawable.flash_off);
         }
         else{
-            mButtonFlash.setBackgroundResource(R.drawable.flash_on);
+            //mButtonFlash.setBackgroundResource(R.drawable.flash_on);
         }
     }
 
@@ -300,6 +298,11 @@ public class CameraActivity extends Activity {
             makeToast("Unable to save image data!");
         }
         MediaScannerConnection.scanFile(this, new String[]{mPictureFile.toString()}, null, null);
+
+        // Cleanup
+        cameraPostEffects.recycle();
+        newImage.recycle();
+        cameraBitmap.recycle();
     }
 
 
@@ -386,12 +389,12 @@ public class CameraActivity extends Activity {
      * increases brightness to maximum to create
      * an artificial flash
      */
-    private void runArtificialFlash(){
+/*    private void runArtificialFlash(){
         Window window = getWindow();
 
         // Enable white background flash overlay
-        SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
-        flashOverlay.setVisibility(View.VISIBLE);
+        //SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+        //flashOverlay.setVisibility(View.VISIBLE);
 
         // Get current brightness
         try {
@@ -408,13 +411,13 @@ public class CameraActivity extends Activity {
         layoutpars.screenBrightness = 100 / (float)100;
         window.setAttributes(layoutpars);
         mContainer.requestLayout();
-    }
+    }*/
 
     /***
      * Clear white flash overlay and
      * readjust screen brightness to user's previous brightness
      */
-    private void cleanupArtificialFlash(){
+/*    private void cleanupArtificialFlash(){
         Window window = getWindow();
 
         //Set the system brightness using the brightness variable value
@@ -423,7 +426,7 @@ public class CameraActivity extends Activity {
         //Set the brightness of this window
         layoutpars.screenBrightness = mBrightness / 100;
         window.setAttributes(layoutpars);
-    }
+    }*/
 
     /***
      * Callback when the picture is taken
@@ -456,8 +459,8 @@ public class CameraActivity extends Activity {
 
             // Once the JPEG is available, we can turn off the flash overlay
             Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-            SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
-            flashOverlay.setVisibility(View.INVISIBLE);
+           // SurfaceView flashOverlay = (SurfaceView) findViewById(R.id.overlay_flash);
+            //flashOverlay.setVisibility(View.GONE);
         }
     };
 
@@ -479,11 +482,11 @@ public class CameraActivity extends Activity {
      * Shows a Crouton (a toast like message that slides from the top of the screen)
      * indicating the photo was saved
      */
-    private void showSavedCrouton(){
+/*    private void showSavedCrouton(){
         mSavedBanner = (RelativeLayout) findViewById(R.id.banner_saved);
         Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
         mSavedBanner.startAnimation(slideDown);
-    }
+    }*/
 
     // ****************************************************
     // ********** Application Behavior Functions **********
@@ -512,29 +515,75 @@ public class CameraActivity extends Activity {
             mPreview = (CameraPreview) findViewById(R.id.camera_preview);
         }
 
-        mCutoutView = (SurfaceView) findViewById(R.id.overlay);
-        mCutoutView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        mCutoutView1 = (SurfaceView) findViewById(R.id.overlay1);
+        mCutoutView1.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+
+        mCutoutView2 = (SurfaceView) findViewById(R.id.overlay2);
+        mCutoutView2.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
         mCutouts = new DrawablesCircularArray();
 
         // Enable cutout swiping
-        mCutoutView.setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()){
+        mCutoutView1.setOnTouchListener(getCutoutSwipeListener(mCutoutView1));
+        mCutoutView2.setOnTouchListener(getCutoutSwipeListener(mCutoutView2));
+    }
+
+
+    private OnSwipeTouchListener getCutoutSwipeListener(final SurfaceView view){
+        return new OnSwipeTouchListener(getApplicationContext()){
             @Override
             public void onSwipeRight(){
-                //if(!mPreviewLocked){
-                    mCutoutView.setBackgroundResource(mCutouts.getNextDrawable());
-                    super.onSwipeRight();
-                //}
+                if(!mPreviewLocked) {
+                    if (mCutoutView1.equals(view)) {
+                        // Hide the first cutout and change its cutout behind the scenes
+                        mCutoutView1.setVisibility(View.INVISIBLE);
+                        mCutoutView1.setBackgroundResource(mCutouts.getNextDrawable());
+
+                        // Show the second hideout with animation
+                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right);
+                        mCutoutView2.startAnimation(slideDown);
+                        mCutoutView2.setVisibility(View.VISIBLE);
+                    } else {
+                        // Hide the second cutout and change its cutout behind the scenes
+                        mCutoutView2.setVisibility(View.INVISIBLE);
+                        mCutoutView2.setBackgroundResource(mCutouts.getNextDrawable());
+
+                        // Show the second hideout with animation
+                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right);
+                        mCutoutView1.startAnimation(slideDown);
+                        mCutoutView1.setVisibility(View.VISIBLE);
+                    }
+                }
+                super.onSwipeRight();
             }
 
             @Override
             public void onSwipeLeft() {
-                //if(!mPreviewLocked){
-                    mCutoutView.setBackgroundResource(mCutouts.getPreviousDrawable());
-                    super.onSwipeLeft();
-                //}
+                if(!mPreviewLocked){
+                    if(mCutoutView1.equals(view)){
+                        // Hide the first cutout and change its cutout behind the scenes
+                        mCutoutView1.setVisibility(View.INVISIBLE);
+                        mCutoutView1.setBackgroundResource(mCutouts.getPreviousDrawable());
+
+                        // Show the second hideout with animation
+                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
+                        mCutoutView2.startAnimation(slideDown);
+                        mCutoutView2.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        // Hide the second cutout and change its cutout behind the scenes
+                        mCutoutView2.setVisibility(View.INVISIBLE);
+                        mCutoutView2.setBackgroundResource(mCutouts.getPreviousDrawable());
+
+                        // Show the second hideout with animation
+                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
+                        mCutoutView1.startAnimation(slideDown);
+                        mCutoutView1.setVisibility(View.VISIBLE);
+                    }
+                }
+                super.onSwipeLeft();
             }
-        });
+        };
     }
 
     @Override
@@ -582,9 +631,9 @@ public class CameraActivity extends Activity {
             sCamera.startPreview();
             mPreviewLocked = false;
             togglePreviewUI(true);
-            if(mFlashOn){
+            /*if(mFlashOn){
                 cleanupArtificialFlash();
-            }
+            }*/
         }
         else{
             super.onBackPressed();

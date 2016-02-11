@@ -28,7 +28,8 @@ public class DrawablesCircularArray {
         mDrawables = new ArrayList<Integer>();
         // TODO: This can definitely be improved somehow
         // to dynamically load all the available drawables from a separate directory
-        mDrawables.add(R.drawable.family_of_mice_co);
+        mDrawables.add(R.drawable.co_family_of_mice);
+        mDrawables.add(R.drawable.co_gardenhead);
         mDrawables.add(R.drawable.suit_nd);
     }
 

@@ -1,0 +1,61 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:layout_height="fill_parent"
+    android:id="@+id/container">
+
+    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/overlay"/>
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/button_share"
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/button_cancel"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/button_flash"
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp" />
+
+    <Button
+        android:id="@+id/button_shutter"
+        android:layout_width="fill_parent"
+        android:layout_height="108dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"/>
+
+</RelativeLayout>
