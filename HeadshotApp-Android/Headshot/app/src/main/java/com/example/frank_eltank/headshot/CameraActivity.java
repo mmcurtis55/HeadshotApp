@@ -537,18 +537,19 @@ public class CameraActivity extends Activity {
                     if (mCutoutView1.equals(view)) {
                         // Hide the first cutout and change its cutout behind the scenes
                         mCutoutView1.setVisibility(View.INVISIBLE);
-                        mCutoutView1.setBackgroundResource(mCutouts.getNextDrawable());
 
-                        // Show the second hideout with animation
+                        // Show the second cutout with animation
+                        mCutoutView2.setBackgroundResource(mCutouts.getPreviousDrawable());
                         Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right);
                         mCutoutView2.startAnimation(slideDown);
                         mCutoutView2.setVisibility(View.VISIBLE);
                     } else {
                         // Hide the second cutout and change its cutout behind the scenes
                         mCutoutView2.setVisibility(View.INVISIBLE);
-                        mCutoutView2.setBackgroundResource(mCutouts.getNextDrawable());
 
-                        // Show the second hideout with animation
+
+                        // Show the first cutout with animation
+                        mCutoutView1.setBackgroundResource(mCutouts.getPreviousDrawable());
                         Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right);
                         mCutoutView1.startAnimation(slideDown);
                         mCutoutView1.setVisibility(View.VISIBLE);
@@ -563,9 +564,9 @@ public class CameraActivity extends Activity {
                     if(mCutoutView1.equals(view)){
                         // Hide the first cutout and change its cutout behind the scenes
                         mCutoutView1.setVisibility(View.INVISIBLE);
-                        mCutoutView1.setBackgroundResource(mCutouts.getPreviousDrawable());
 
-                        // Show the second hideout with animation
+                        // Show the second cutout with animation
+                        mCutoutView2.setBackgroundResource(mCutouts.getNextDrawable());
                         Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
                         mCutoutView2.startAnimation(slideDown);
                         mCutoutView2.setVisibility(View.VISIBLE);
@@ -573,9 +574,9 @@ public class CameraActivity extends Activity {
                     else{
                         // Hide the second cutout and change its cutout behind the scenes
                         mCutoutView2.setVisibility(View.INVISIBLE);
-                        mCutoutView2.setBackgroundResource(mCutouts.getPreviousDrawable());
 
-                        // Show the second hideout with animation
+                        // Show the first cutout with animation
+                        mCutoutView1.setBackgroundResource(mCutouts.getNextDrawable());
                         Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
                         mCutoutView1.startAnimation(slideDown);
                         mCutoutView1.setVisibility(View.VISIBLE);
@@ -636,7 +637,7 @@ public class CameraActivity extends Activity {
             }*/
         }
         else{
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 }
