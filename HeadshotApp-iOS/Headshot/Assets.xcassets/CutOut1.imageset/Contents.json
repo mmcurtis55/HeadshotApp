@@ -2,12 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Icon.png",
+      "filename" : "major_suit_co.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Icon@2x.png",
       "scale" : "2x"
     },
     {

@@ -53,11 +53,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         // 1
-        pageImages = [UIImage(named:"family_of_mice_co.png")!,
-            UIImage(named:"SuitND.png")!,
-            UIImage(named:"family_of_mice_co.png")!,
-            UIImage(named:"SuitND.png")!,
-            UIImage(named:"family_of_mice_co.png")!]
+        pageImages = [UIImage(named:"CutOut1.png")!,
+            UIImage(named:"CutOut2.png")!,
+            UIImage(named:"CutOut3.png")!]
         currentPage = 0
         
         let pageCount = pageImages.count
@@ -75,7 +73,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         let pagesScrollViewSize = scrollView.frame.size
-        scrollView.contentSize = CGSizeMake(screenSize.width * CGFloat(pageImages.count+2), pagesScrollViewSize.height)
+        scrollView.contentSize = CGSizeMake(screenSize.width * CGFloat(pageImages.count), pagesScrollViewSize.height)
         
         
         // 5
@@ -202,7 +200,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             }
             
         }else{
-            tempImageView.image = UIImage(named: "iTunesArtwork.png")
+            tempImageView.image = UIImage(named: "tom_brady.png")
             print("No camera")
         }
     }
@@ -249,7 +247,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func createComposit(){
         let bottomImage = self.tempImageView.image!
-        let topImage = self.pageImages[self.currentPage!+1]
+        let topImage = self.pageImages[self.currentPage!]
         
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
@@ -288,6 +286,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             didPressTakePhoto()
             
         }
+        
+    }
+    
+    func flash(){
+    
         
     }
     
@@ -408,7 +411,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         
         // Update the page control
-        //pageControl.currentPage = page
+        currentPage = page
         
         // Work out which pages you want to load
         let firstPage = page - 1
