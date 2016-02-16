@@ -536,6 +536,8 @@ public class CameraActivity extends Activity {
                 if(!mPreviewLocked) {
                     if (mCutoutView1.equals(view)) {
                         // Hide the first cutout and change its cutout behind the scenes
+                        Animation slideRightOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right_out);
+                        mCutoutView1.startAnimation(slideRightOut);
                         mCutoutView1.setVisibility(View.INVISIBLE);
 
                         // Show the second cutout with animation
@@ -545,6 +547,8 @@ public class CameraActivity extends Activity {
                         mCutoutView2.setVisibility(View.VISIBLE);
                     } else {
                         // Hide the second cutout and change its cutout behind the scenes
+                        Animation slideRightOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right_out);
+                        mCutoutView2.startAnimation(slideRightOut);
                         mCutoutView2.setVisibility(View.INVISIBLE);
 
 
@@ -563,6 +567,8 @@ public class CameraActivity extends Activity {
                 if(!mPreviewLocked){
                     if(mCutoutView1.equals(view)){
                         // Hide the first cutout and change its cutout behind the scenes
+                        Animation slideLeftOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left_out);
+                        mCutoutView1.startAnimation(slideLeftOut);
                         mCutoutView1.setVisibility(View.INVISIBLE);
 
                         // Show the second cutout with animation
@@ -573,6 +579,9 @@ public class CameraActivity extends Activity {
                     }
                     else{
                         // Hide the second cutout and change its cutout behind the scenes
+                        //mCutoutView2.setVisibility(View.INVISIBLE);
+                        Animation slideLeftOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left_out);
+                        mCutoutView2.startAnimation(slideLeftOut);
                         mCutoutView2.setVisibility(View.INVISIBLE);
 
                         // Show the first cutout with animation
