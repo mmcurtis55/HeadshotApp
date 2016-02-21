@@ -313,7 +313,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             //New Excluded Activities Code
             activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-            //
+    
             
             self.presentViewController(activityVC, animated: true, completion: nil)
         }else{
