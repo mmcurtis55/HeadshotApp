@@ -11,7 +11,13 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
-    <SurfaceView
+    <view xmlns:android="http://schemas.android.com/apk/res/android"
+        class="com.example.frank_eltank.headshot.InfiniteViewPager"
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+<!--        <SurfaceView
         android:id="@+id/overlay1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -22,7 +28,7 @@
         android:id="@+id/overlay2"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:visibility="invisible"/>
+        android:visibility="invisible"/>-->
 
 <!--    <SurfaceView
         android:id="@+id/overlay3"

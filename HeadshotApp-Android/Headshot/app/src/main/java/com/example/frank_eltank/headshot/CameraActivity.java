@@ -25,7 +25,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,11 +57,13 @@ import java.util.List;
  * It handles UI and application state behaviors
  *
  */
-public class CameraActivity extends Activity {
+public class CameraActivity extends FragmentActivity {
 
     static Camera sCamera;
     private CameraPreview mPreview;
     private DrawablesCircularArray mCutouts;
+    private int[] drawables = new int[]{R.drawable.co_gardenhead, R.drawable.co_major_suit, R.drawable.co_family_of_mice};
+    private int mPointer = 0;
 
     // Handles to UI elements
     private RelativeLayout mContainer;
@@ -282,7 +289,7 @@ public class CameraActivity extends Activity {
         canvas.drawBitmap(cameraPostEffects, 0f, 0f, null);
 
         // Draw overlay
-        Drawable overlay = getResources().getDrawable(mCutouts.getCurrentDrawable());
+        Drawable overlay = getResources().getDrawable(drawables[mPointer]);
         overlay.setBounds(0,0,cameraPostEffects.getWidth(), cameraPostEffects.getHeight());
         overlay.draw(canvas);
 
@@ -515,7 +522,7 @@ public class CameraActivity extends Activity {
             mPreview = (CameraPreview) findViewById(R.id.camera_preview);
         }
 
-        mCutoutView1 = (SurfaceView) findViewById(R.id.overlay1);
+       /* mCutoutView1 = (SurfaceView) findViewById(R.id.overlay1);
         mCutoutView1.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
         mCutoutView2 = (SurfaceView) findViewById(R.id.overlay2);
@@ -526,6 +533,39 @@ public class CameraActivity extends Activity {
         // Enable cutout swiping
         mCutoutView1.setOnTouchListener(getCutoutSwipeListener(mCutoutView1));
         mCutoutView2.setOnTouchListener(getCutoutSwipeListener(mCutoutView2));
+
+        // TODO: Remove once we finish testing infinite pager
+        mCutoutView1.setVisibility(View.GONE);
+        mCutoutView2.setVisibility(View.GONE);*/
+
+        FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()){
+
+            @Override
+            public int getCount(){
+                return drawables.length;
+            }
+
+            @Override
+            public Fragment getItem(int position){
+                Fragment fragment = new CutoutFragment();
+                Bundle args = new Bundle();
+                args.putInt("resourceId", drawables[position]);
+                mPointer = position;
+                fragment.setArguments(args);
+                return fragment;
+            }
+        };
+
+        // wrap pager to provide a minimum of 4 pages
+        MinFragmentPagerAdapter wrappedMinAdapter = new MinFragmentPagerAdapter(getSupportFragmentManager());
+        wrappedMinAdapter.setAdapter(adapter);
+
+        // wrap pager to provide infinite paging with wrap-around
+        PagerAdapter wrappedAdapter = new InfinitePagerAdapter(wrappedMinAdapter);
+
+        // actually an InfiniteViewPager
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setAdapter(wrappedAdapter);
     }
 
 
@@ -566,16 +606,38 @@ public class CameraActivity extends Activity {
             public void onSwipeLeft() {
                 if(!mPreviewLocked){
                     if(mCutoutView1.equals(view)){
+                        Animation slideLeft1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
+                        /*slideLeft1.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                //mCutoutView1.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                       });*/
+
                         // Hide the first cutout and change its cutout behind the scenes
+<<<<<<< HEAD
+                        mCutoutView1.startAnimation(slideLeft1);
+=======
+>>>>>>> origin/master
                         Animation slideLeftOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left_out);
                         mCutoutView1.startAnimation(slideLeftOut);
                         mCutoutView1.setVisibility(View.INVISIBLE);
 
                         // Show the second cutout with animation
+                       /* Animation slideLeft = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
                         mCutoutView2.setBackgroundResource(mCutouts.getNextDrawable());
-                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
-                        mCutoutView2.startAnimation(slideDown);
-                        mCutoutView2.setVisibility(View.VISIBLE);
+                        mCutoutView2.startAnimation(slideLeft);
+                        mCutoutView2.setVisibility(View.VISIBLE);*/
                     }
                     else{
                         // Hide the second cutout and change its cutout behind the scenes
@@ -586,8 +648,8 @@ public class CameraActivity extends Activity {
 
                         // Show the first cutout with animation
                         mCutoutView1.setBackgroundResource(mCutouts.getNextDrawable());
-                        Animation slideDown = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
-                        mCutoutView1.startAnimation(slideDown);
+                        Animation slideLeft = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
+                        mCutoutView1.startAnimation(slideLeft);
                         mCutoutView1.setVisibility(View.VISIBLE);
                     }
                 }
