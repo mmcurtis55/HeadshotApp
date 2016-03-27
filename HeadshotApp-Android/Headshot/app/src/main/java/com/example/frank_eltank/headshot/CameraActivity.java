@@ -69,6 +69,7 @@ public class CameraActivity extends FragmentActivity {
     private RelativeLayout mContainer;
     private SurfaceView mCutoutView1;
     private SurfaceView mCutoutView2;
+    private InfiniteViewPager mInfiniteViewPager;
     private Button mButtonShare;
     private Button mButtonSave;
     private Button mButtonCancel;
@@ -99,6 +100,7 @@ public class CameraActivity extends FragmentActivity {
             public void onClick(View view) {
                 sCamera.startPreview();
                 mPreviewLocked = false;
+                mInfiniteViewPager.setPagingEnabled(true);
                 togglePreviewUI(true);
                 mPictureData = null;
                 /*if(mFlashOn){
@@ -289,8 +291,12 @@ public class CameraActivity extends FragmentActivity {
         canvas.drawBitmap(cameraPostEffects, 0f, 0f, null);
 
         // Draw overlay
+        int position = mInfiniteViewPager.getCurrentItem();
+        if(position > drawables.length - 1){
+            position = drawables.length-1;
+        }
         Drawable overlay = getResources().getDrawable(drawables[mPointer]);
-        overlay.setBounds(0,0,cameraPostEffects.getWidth(), cameraPostEffects.getHeight());
+        overlay.setBounds(0, 0, cameraPostEffects.getWidth(), cameraPostEffects.getHeight());
         overlay.draw(canvas);
 
         // Saved merged overlay
@@ -442,6 +448,7 @@ public class CameraActivity extends FragmentActivity {
         @Override
         public void onShutter() {
             mPreviewLocked = true;
+            mInfiniteViewPager.setPagingEnabled(false);
             togglePreviewUI(false);
         }
     };
@@ -550,7 +557,6 @@ public class CameraActivity extends FragmentActivity {
                 Fragment fragment = new CutoutFragment();
                 Bundle args = new Bundle();
                 args.putInt("resourceId", drawables[position]);
-                mPointer = position;
                 fragment.setArguments(args);
                 return fragment;
             }
@@ -559,17 +565,21 @@ public class CameraActivity extends FragmentActivity {
         // wrap pager to provide a minimum of 4 pages
         MinFragmentPagerAdapter wrappedMinAdapter = new MinFragmentPagerAdapter(getSupportFragmentManager());
         wrappedMinAdapter.setAdapter(adapter);
-
         // wrap pager to provide infinite paging with wrap-around
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(wrappedMinAdapter);
 
         // actually an InfiniteViewPager
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(wrappedAdapter);
+        mInfiniteViewPager = (InfiniteViewPager) findViewById(R.id.pager);
+        mInfiniteViewPager.setAdapter(wrappedAdapter);
+        mInfiniteViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+        public void onPageSelected(int position){
+                mPointer = position % drawables.length;
+            }
+        });
     }
 
-
-    private OnSwipeTouchListener getCutoutSwipeListener(final SurfaceView view){
+    /*private OnSwipeTouchListener getCutoutSwipeListener(final SurfaceView view){
         return new OnSwipeTouchListener(getApplicationContext()){
             @Override
             public void onSwipeRight(){
@@ -607,7 +617,7 @@ public class CameraActivity extends FragmentActivity {
                 if(!mPreviewLocked){
                     if(mCutoutView1.equals(view)){
                         Animation slideLeft1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
-                        /*slideLeft1.setAnimationListener(new Animation.AnimationListener() {
+                        *//*slideLeft1.setAnimationListener(new Animation.AnimationListener() {
                             @Override
                             public void onAnimationStart(Animation animation) {
 
@@ -622,22 +632,19 @@ public class CameraActivity extends FragmentActivity {
                             public void onAnimationRepeat(Animation animation) {
 
                             }
-                       });*/
+                       });*//*
 
                         // Hide the first cutout and change its cutout behind the scenes
-<<<<<<< HEAD
                         mCutoutView1.startAnimation(slideLeft1);
-=======
->>>>>>> origin/master
                         Animation slideLeftOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left_out);
                         mCutoutView1.startAnimation(slideLeftOut);
                         mCutoutView1.setVisibility(View.INVISIBLE);
 
                         // Show the second cutout with animation
-                       /* Animation slideLeft = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
+                       *//* Animation slideLeft = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
                         mCutoutView2.setBackgroundResource(mCutouts.getNextDrawable());
                         mCutoutView2.startAnimation(slideLeft);
-                        mCutoutView2.setVisibility(View.VISIBLE);*/
+                        mCutoutView2.setVisibility(View.VISIBLE);*//*
                     }
                     else{
                         // Hide the second cutout and change its cutout behind the scenes
@@ -656,7 +663,7 @@ public class CameraActivity extends FragmentActivity {
                 super.onSwipeLeft();
             }
         };
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -702,6 +709,7 @@ public class CameraActivity extends FragmentActivity {
         if(mPreviewLocked){
             sCamera.startPreview();
             mPreviewLocked = false;
+            mInfiniteViewPager.setPagingEnabled(true);
             togglePreviewUI(true);
             /*if(mFlashOn){
                 cleanupArtificialFlash();

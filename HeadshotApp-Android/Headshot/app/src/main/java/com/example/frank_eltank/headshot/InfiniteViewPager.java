@@ -4,11 +4,15 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.widget.Toast;
 
 /**
  * Created by Frank on 2/24/2016.
  */
 public class InfiniteViewPager extends ViewPager {
+
+    private boolean isPagingEnabled = true;
 
     public InfiniteViewPager(Context context) {
         super(context);
@@ -56,6 +60,11 @@ public class InfiniteViewPager extends ViewPager {
         }
     }
 
+    public int getRealCount(){
+        InfinitePagerAdapter infAdapter = (InfinitePagerAdapter) getAdapter();
+        return infAdapter.getRealCount();
+    }
+
     private int getOffsetAmount() {
         if (getAdapter().getCount() == 0) {
             return 0;
@@ -70,5 +79,19 @@ public class InfiniteViewPager extends ViewPager {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return this.isPagingEnabled && super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        return this.isPagingEnabled && super.onInterceptTouchEvent(event);
+    }
+
+    public void setPagingEnabled(boolean b) {
+        this.isPagingEnabled = b;
     }
 }
