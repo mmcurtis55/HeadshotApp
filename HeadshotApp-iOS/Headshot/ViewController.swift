@@ -14,12 +14,12 @@ import Social
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
     
     @IBOutlet var scrollView: UIScrollView!
-
+    
     
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
     var currentPage: Int?
-
+    
     
     var captureSession : AVCaptureSession?
     var stillImageOutput : AVCaptureStillImageOutput?
@@ -54,8 +54,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // 1
         pageImages = [UIImage(named:"CutOut1.png")!,
-            UIImage(named:"CutOut2.png")!,
-            UIImage(named:"CutOut3.png")!]
+                      UIImage(named:"CutOut2.png")!,
+                      UIImage(named:"CutOut3.png")!]
         currentPage = 0
         
         let pageCount = pageImages.count
@@ -211,7 +211,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //image + overlay combo
     var composit: UIImage!
     
-
+    
     
     
     func didPressTakePhoto(){
@@ -290,7 +290,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func flash(){
-    
+        
         
     }
     
@@ -313,7 +313,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             //New Excluded Activities Code
             activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
-    
+            
             
             self.presentViewController(activityVC, animated: true, completion: nil)
         }else{
@@ -346,7 +346,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-
+    
     
     
     
@@ -354,7 +354,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return true
         
     }
-
+    
     func loadPage(page: Int) {
         
         if page < 0 || page >= pageImages.count {
@@ -443,7 +443,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         loadVisiblePages()
     }
     
-
-
+    
+    
 }
-
