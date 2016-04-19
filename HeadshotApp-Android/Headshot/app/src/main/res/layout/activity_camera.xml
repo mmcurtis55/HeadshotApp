@@ -11,32 +11,19 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
-    <view xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- Inifite View Pager -->
+    <!--<view xmlns:android="http://schemas.android.com/apk/res/android"
         class="com.example.frank_eltank.headshot.InfiniteViewPager"
         android:id="@+id/pager"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"/>-->
 
-<!--        <SurfaceView
-        android:id="@+id/overlay1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/co_major_suit"/>
-
-
-    <SurfaceView
-        android:id="@+id/overlay2"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:visibility="invisible"/>-->
-
-<!--    <SurfaceView
-        android:id="@+id/overlay3"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_toRightOf="@id/overlay2"
-        android:background="@drawable/suit_nd"/>-->
-
+    <!-- Non Infinite View Pager -->
+    <com.example.frank_eltank.headshot.CutoutViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 <!--    <SurfaceView
         android:id="@+id/overlay_flash"
@@ -56,35 +43,38 @@
 
     <Button
         android:id="@+id/button_save"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="26dp"
+        android:layout_height="21dp"
+        android:padding="10dp"
         android:background="@drawable/save"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
         android:visibility="invisible"/>
 
     <Button
         android:id="@+id/button_share"
         android:layout_width="25dp"
-        android:layout_height="30dp"
+        android:layout_height="33dp"
+        android:padding="10dp"
         android:background="@drawable/share"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         android:visibility="invisible"/>
 
     <Button
         android:id="@+id/button_cancel"
         android:layout_width="15dp"
         android:layout_height="15dp"
+        android:padding="10dp"
         android:background="@drawable/x"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
         android:visibility="invisible"/>
 
 <!--    <Button

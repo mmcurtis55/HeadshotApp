@@ -56,4 +56,8 @@ public class DrawablesCircularArray {
         }
         return mDrawables.get(currentCutoutPointer);
     }
+
+    public int getSize(){
+        return mDrawables.size();
+    }
 }
