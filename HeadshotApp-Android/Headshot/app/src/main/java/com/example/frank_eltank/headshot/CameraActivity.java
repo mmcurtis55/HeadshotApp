@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -69,7 +70,8 @@ public class CameraActivity extends FragmentActivity {
     private RelativeLayout mContainer;
     private SurfaceView mCutoutView1;
     private SurfaceView mCutoutView2;
-    private InfiniteViewPager mInfiniteViewPager;
+    //private InfiniteViewPager mInfiniteViewPager;
+    private CutoutViewPager mPager;
     private Button mButtonShare;
     private Button mButtonSave;
     private Button mButtonCancel;
@@ -100,7 +102,8 @@ public class CameraActivity extends FragmentActivity {
             public void onClick(View view) {
                 sCamera.startPreview();
                 mPreviewLocked = false;
-                mInfiniteViewPager.setPagingEnabled(true);
+                //mInfiniteViewPager.setPagingEnabled(true);
+                mPager.setPagingEnabled(true);
                 togglePreviewUI(true);
                 mPictureData = null;
                 /*if(mFlashOn){
@@ -114,6 +117,9 @@ public class CameraActivity extends FragmentActivity {
             @Override
             public void onClick(View view) {
                 shareHeadshot();
+                mPager.setPagingEnabled(true);
+                togglePreviewUI(true);
+                sCamera.startPreview();
             }
         });
 
@@ -291,11 +297,11 @@ public class CameraActivity extends FragmentActivity {
         canvas.drawBitmap(cameraPostEffects, 0f, 0f, null);
 
         // Draw overlay
-        int position = mInfiniteViewPager.getCurrentItem();
+        /*int position = mInfiniteViewPager.getCurrentItem();
         if(position > drawables.length - 1){
             position = drawables.length-1;
-        }
-        Drawable overlay = getResources().getDrawable(drawables[mPointer]);
+        }*/
+        Drawable overlay = getResources().getDrawable(drawables[mPager.getCurrentItem()]);
         overlay.setBounds(0, 0, cameraPostEffects.getWidth(), cameraPostEffects.getHeight());
         overlay.draw(canvas);
 
@@ -448,7 +454,8 @@ public class CameraActivity extends FragmentActivity {
         @Override
         public void onShutter() {
             mPreviewLocked = true;
-            mInfiniteViewPager.setPagingEnabled(false);
+            //mInfiniteViewPager.setPagingEnabled(false);
+            mPager.setPagingEnabled(false);
             togglePreviewUI(false);
         }
     };
@@ -529,23 +536,30 @@ public class CameraActivity extends FragmentActivity {
             mPreview = (CameraPreview) findViewById(R.id.camera_preview);
         }
 
-       /* mCutoutView1 = (SurfaceView) findViewById(R.id.overlay1);
-        mCutoutView1.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-
-        mCutoutView2 = (SurfaceView) findViewById(R.id.overlay2);
-        mCutoutView2.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-
         mCutouts = new DrawablesCircularArray();
 
-        // Enable cutout swiping
-        mCutoutView1.setOnTouchListener(getCutoutSwipeListener(mCutoutView1));
-        mCutoutView2.setOnTouchListener(getCutoutSwipeListener(mCutoutView2));
+        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                Bundle b = new Bundle();
+                b.putInt("resourceId", drawables[position]);
+                mPointer = position;
+                CutoutFragment fragment = new CutoutFragment();
+                fragment.setArguments(b);
+                return fragment;
+            }
 
-        // TODO: Remove once we finish testing infinite pager
-        mCutoutView1.setVisibility(View.GONE);
-        mCutoutView2.setVisibility(View.GONE);*/
+            @Override
+            public int getCount() {
+                return mCutouts.getSize();
+            }
+        };
 
-        FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()){
+        // Instantiate a ViewPager and a PagerAdapter.
+        mPager = (CutoutViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(adapter);
+
+        /*FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()){
 
             @Override
             public int getCount(){
@@ -576,7 +590,7 @@ public class CameraActivity extends FragmentActivity {
         public void onPageSelected(int position){
                 mPointer = position % drawables.length;
             }
-        });
+        });*/
     }
 
     /*private OnSwipeTouchListener getCutoutSwipeListener(final SurfaceView view){
@@ -709,7 +723,8 @@ public class CameraActivity extends FragmentActivity {
         if(mPreviewLocked){
             sCamera.startPreview();
             mPreviewLocked = false;
-            mInfiniteViewPager.setPagingEnabled(true);
+            //mInfiniteViewPager.setPagingEnabled(true);
+            mPager.setPagingEnabled(true);
             togglePreviewUI(true);
             /*if(mFlashOn){
                 cleanupArtificialFlash();
