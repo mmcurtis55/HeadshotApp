@@ -63,7 +63,7 @@ public class CameraActivity extends FragmentActivity {
     static Camera sCamera;
     private CameraPreview mPreview;
     private DrawablesCircularArray mCutouts;
-    private int[] drawables = new int[]{R.drawable.co_gardenhead, R.drawable.co_major_suit, R.drawable.co_family_of_mice};
+    private int[] drawables = new int[]{R.drawable.co_gardenhead, R.drawable.co_family_of_mice, R.drawable.co_major_suit};
     private int mPointer = 0;
 
     // Handles to UI elements
