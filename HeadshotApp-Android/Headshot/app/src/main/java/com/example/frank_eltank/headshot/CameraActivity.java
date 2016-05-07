@@ -8,6 +8,8 @@ package com.example.frank_eltank.headshot;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -63,7 +65,7 @@ public class CameraActivity extends FragmentActivity {
     static Camera sCamera;
     private CameraPreview mPreview;
     private DrawablesCircularArray mCutouts;
-    private int[] drawables = new int[]{R.drawable.co_gardenhead, R.drawable.co_major_suit, R.drawable.co_family_of_mice};
+    private int[] drawables = new int[]{R.drawable.co_gardenhead, R.drawable.co_family_of_mice, R.drawable.co_major_suit};
     private int mPointer = 0;
 
     // Handles to UI elements
@@ -86,6 +88,8 @@ public class CameraActivity extends FragmentActivity {
     private float mBrightness = 0.0f;
     private byte[] mPictureData;
     private File mPictureFile;
+
+    private static final String TUTORIAL_SHOW = "TUTORIAL_SHOW";
 
     // ****************************************************
     // ***** UI Initialization and Behavior Functions *****
@@ -369,7 +373,7 @@ public class CameraActivity extends FragmentActivity {
             }
         }
         SharedPreferences previewSizePref;
-        previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
+        previewSizePref = getSharedPreferences("Headshot_Settings",MODE_PRIVATE);
 
         SharedPreferences.Editor prefEditor = previewSizePref.edit();
         prefEditor.putInt("width", optimalSize.width);
@@ -558,6 +562,32 @@ public class CameraActivity extends FragmentActivity {
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (CutoutViewPager) findViewById(R.id.pager);
         mPager.setAdapter(adapter);
+
+        // Instructions Dialog
+        final SharedPreferences settings;
+        settings = getSharedPreferences("Headshot_Settings",MODE_PRIVATE);
+        boolean showTutorial = settings.getBoolean(TUTORIAL_SHOW, true);
+
+        if(showTutorial){
+            new AlertDialog.Builder(CameraActivity.this)
+                    .setTitle("How To")
+                    .setMessage("Swipe left or right on the top 80% of the screen to change the cutout. \n\nTap the bottom 20% of the screen to capture your Headshot.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton("Ok and Don't Show Again", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor prefEditor = settings.edit();
+                            prefEditor.putBoolean(TUTORIAL_SHOW, false);
+                            prefEditor.commit();
+                        }
+                    })
+                    .show();
+        }
 
         /*FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()){
 
