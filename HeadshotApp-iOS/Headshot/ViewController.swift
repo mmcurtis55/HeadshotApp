@@ -15,6 +15,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBOutlet var scrollView: UIScrollView!
     
+
     
     var pageImages: [UIImage] = []
     var pageViews: [UIImageView?] = []
@@ -42,6 +43,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+       
+        
+   
+        
         
         //scrollView
         let screenSize: CGRect = UIScreen.mainScreen().bounds
@@ -143,7 +149,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        //self.defaults.setValue("true", forKey: "show")
         previewLayer?.frame = cameraView.bounds
+        if let show = defaults.stringForKey("show") {
+            if show == "true"{
+                beginingPopup()
+            }
+        }else{
+            //Nothing stored in NSUserDefaults yet. Set a value.
+            defaults.setValue("true", forKey: "show")
+        }
+
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -436,6 +452,52 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             purgePage(index)
         }
     }
+    
+    func beginingPopup(){
+        if let show = self.defaults.stringForKey("show")  {
+            if( show == "true"){
+                
+                let alert = UIAlertController(title: "How To", message:
+                    "Swipe left or right on the top 80% of the screen to change between cutouts.\n\nTap the bottom 20% to take a picture.", preferredStyle: .Alert) // 1
+                let firstAction = UIAlertAction(title: "Dismiss", style: .Default) { (alert: UIAlertAction!) -> Void in
+                    
+                    if let _ = self.defaults.stringForKey("show") {
+                        self.defaults.setValue("true", forKey: "show")
+                    }else{
+                        
+                        //Nothing stored in NSUserDefaults yet. Set a value.
+                        self.defaults.setValue("true", forKey: "show")
+                    }
+                    
+                    NSLog("You pressed button one")
+                } // 2
+                
+                let secondAction = UIAlertAction(title: "Never Show Again", style: .Default) { (alert: UIAlertAction!) -> Void in
+                    
+                    if let _ = self.defaults.stringForKey("show") {
+                        self.defaults.setValue("false", forKey: "show")
+                    }else{
+                        
+                        //Nothing stored in NSUserDefaults yet. Set a value.
+                        self.defaults.setValue("false", forKey: "show")
+                    }
+                    
+                    NSLog("You pressed button two")
+                } // 3
+                
+                alert.addAction(firstAction) // 4
+                alert.addAction(secondAction) // 5
+                presentViewController(alert, animated: true, completion:nil) // 6
+            }
+            
+        }else{
+
+            
+            self.defaults.setValue("true", forKey: "show")
+        }
+        
+        }
+    
     
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
