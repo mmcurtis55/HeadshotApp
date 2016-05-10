@@ -347,6 +347,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
             
+            let alert = UIAlertController(title: "Saved", message:
+                "Headshot saved", preferredStyle: .Alert) // 1
+            let firstAction = UIAlertAction(title: "OK", style: .Default) { (alert: UIAlertAction!) -> Void in
+                //NSLog("You pressed button one")
+            } // 2
+            alert.addAction(firstAction) // 4
+            presentViewController(alert, animated: true, completion:nil) // 6
+            
         } else { print("Image save error: No image to save") }
         
     }
@@ -458,8 +466,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             if( show == "true"){
                 
                 let alert = UIAlertController(title: "How To", message:
-                    "Swipe left or right on the top 80% of the screen to change between cutouts.\n\nTap the bottom 20% to take a picture.", preferredStyle: .Alert) // 1
-                let firstAction = UIAlertAction(title: "Dismiss", style: .Default) { (alert: UIAlertAction!) -> Void in
+                    "Swipe left or right on the top 80% of the screen to change the cutouts.\n\nTap the bottom 20% of the screen to capture your Headshot.", preferredStyle: .Alert) // 1
+                let firstAction = UIAlertAction(title: "OK", style: .Default) { (alert: UIAlertAction!) -> Void in
                     
                     if let _ = self.defaults.stringForKey("show") {
                         self.defaults.setValue("true", forKey: "show")
@@ -472,7 +480,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     NSLog("You pressed button one")
                 } // 2
                 
-                let secondAction = UIAlertAction(title: "Never Show Again", style: .Default) { (alert: UIAlertAction!) -> Void in
+                let secondAction = UIAlertAction(title: "OK and Don't Show Again", style: .Default) { (alert: UIAlertAction!) -> Void in
                     
                     if let _ = self.defaults.stringForKey("show") {
                         self.defaults.setValue("false", forKey: "show")
