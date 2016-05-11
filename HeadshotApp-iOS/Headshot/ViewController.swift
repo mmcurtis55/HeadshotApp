@@ -154,8 +154,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         if let show = defaults.stringForKey("show") {
             if show == "true"{
                 beginingPopup()
-            }
-        }else{
+            } else if show == "share"{
+            defaults.setValue("true", forKey: "show")
+                }
+        }else {
             //Nothing stored in NSUserDefaults yet. Set a value.
             defaults.setValue("true", forKey: "show")
         }
@@ -318,13 +320,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         print("share Photo")
         
         
-        let textToShare = "Check out the Headshot app in the App Store"
+        //let textToShare = "Check out the Headshot app in the App Store"
         self.createComposit()
         
         if let image = composit
         {
             //image = UIImage(CGImage: image.CGImage!, scale: 1.0, orientation: .RightMirrored)
-            let objectsToShare = [textToShare, image]
+            let objectsToShare = [image]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             
             //New Excluded Activities Code
@@ -332,6 +334,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             
             self.presentViewController(activityVC, animated: true, completion: nil)
+            if let _ = self.defaults.stringForKey("show") {
+                self.defaults.setValue("share", forKey: "show")
+            }else{
+                
+                //Nothing stored in NSUserDefaults yet. Set a value.
+                self.defaults.setValue("share", forKey: "show")
+            }
         }else{
             print("no image to save")
         }
@@ -466,7 +475,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             if( show == "true"){
                 
                 let alert = UIAlertController(title: "How To", message:
-                    "Swipe left or right on the top 80% of the screen to change the cutouts.\n\nTap the bottom 20% of the screen to capture your Headshot.", preferredStyle: .Alert) // 1
+                    "Swipe left or right on the top 80% of the screen to change the cutout.\n\nTap the bottom 20% of the screen to capture your Headshot.", preferredStyle: .Alert) // 1
                 let firstAction = UIAlertAction(title: "OK", style: .Default) { (alert: UIAlertAction!) -> Void in
                     
                     if let _ = self.defaults.stringForKey("show") {
