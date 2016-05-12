@@ -356,13 +356,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
             
-            let alert = UIAlertController(title: "Saved", message:
+            /*let alert = UIAlertController(title: "Saved", message:
                 "Headshot saved", preferredStyle: .Alert) // 1
             let firstAction = UIAlertAction(title: "OK", style: .Default) { (alert: UIAlertAction!) -> Void in
                 //NSLog("You pressed button one")
             } // 2
             alert.addAction(firstAction) // 4
-            presentViewController(alert, animated: true, completion:nil) // 6
+            presentViewController(alert, animated: true, completion:nil) // 6*/
             
         } else { print("Image save error: No image to save") }
         
