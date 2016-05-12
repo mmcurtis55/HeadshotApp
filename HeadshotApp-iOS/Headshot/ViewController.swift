@@ -160,6 +160,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }else {
             //Nothing stored in NSUserDefaults yet. Set a value.
             defaults.setValue("true", forKey: "show")
+            beginingPopup()
         }
 
     }
@@ -354,7 +355,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.createComposit()
         
         if let image = composit {
-            UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
+            UIImageWriteToSavedPhotosAlbum(image, self, #selector(ViewController.image(_:didFinishSavingWithError:contextInfo:)), nil)
             
             /*let alert = UIAlertController(title: "Saved", message:
                 "Headshot saved", preferredStyle: .Alert) // 1
