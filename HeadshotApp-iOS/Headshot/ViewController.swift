@@ -114,7 +114,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func xPressed(sender: UIButton){
-        print("Release")
+        //print("Release")
         xBtn.hidden = true
         saveBtn.hidden = true
         saveBtn.hidden = true
@@ -127,7 +127,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func capturePressed(sender: UIButton){
-        print("Capture")
+        //print("Capture")
         xBtn.hidden = false
         saveBtn.hidden = false
         saveBtn.hidden = false
@@ -290,12 +290,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         
         if didTakePhoto == true && x {  // if x is pressed and if the photo is displayed as still image
-            print("tap 1")
+           // print("tap 1")
             tempImageView.hidden = true
             didTakePhoto = false
             
         }else if !didTakePhoto && !x { // if main screen was pressed and if the screen is dynamic video
-            print("tap 2")
+            ///print("tap 2")
             captureSession?.startRunning()
             didTakePhoto = true
             didPressTakePhoto()
@@ -314,7 +314,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //Shares photo and text
     @IBAction func sharePhoto(sender: UIButton) {
         
-        print("share Photo")
+        //print("share Photo")
         
         
         //let textToShare = "Check out the Headshot app in the App Store"
@@ -346,7 +346,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
-        print("saved Photo")
+        //print("saved Photo")
         
         self.createComposit()
         
@@ -361,7 +361,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             alert.addAction(firstAction) // 4
             presentViewController(alert, animated: true, completion:nil) // 6*/
             
-        } else { print("Image save error: No image to save") }
+        } else { NSLog("Image save error: No image to save") }
         
     }
     
@@ -371,7 +371,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         else
         {
-            print("Error saving Image")
+            NSLog("Error saving Image")
             //log the error out here ,if any
         }
     }
@@ -433,12 +433,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let pageWidth = scrollView.frame.size.width
         let page = Int(floor((scrollView.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
         
-        //print("page  \(page)")
-        
-        if page == 0
-        {
-            print("page  \(page)")
-        }
         
         // Update the page control
         currentPage = page
@@ -448,39 +442,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let lastPage = page + 1
         
         
-        /*// Purge anything before the first page
-        for var index = 0; index < firstPage; ++index {
-            print("index : \(index)")
-            purgePage(index)
-        }
-        
-        // Load pages in our range
-        for var index = firstPage; index <= lastPage; ++index {
-            print("index :: \(index)")
-            loadPage(index)
-        }
-        
-        // Purge anything after the last page
-        for var index = lastPage+1; index < pageImages.count; ++index {
-            print("index ::: \(index)")
-            purgePage(index)
-        }*/
-        
        //* // Purge anything before the first page
         for index in -1 ... firstPage {
-            print("index1 : \(index)")
             purgePage(index)
         }
         
         // Load pages in our range
         for index in firstPage ... lastPage {
-            print("index2 :: \(index)")
             loadPage(index)
         }
         
         // Purge anything after the last page
         for index in lastPage ... pageImages.count {
-            print("index3 ::: \(index)")
             purgePage(index)
         }
     }
@@ -501,7 +474,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                         self.defaults.setValue("true", forKey: "show")
                     }
                     
-                    NSLog("You pressed button one")
+                    //NSLog("You pressed button one")
                 } // 2
                 
                 let secondAction = UIAlertAction(title: "OK and Don't Show Again", style: .Default) { (alert: UIAlertAction!) -> Void in
@@ -514,7 +487,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                         self.defaults.setValue("false", forKey: "show")
                     }
                     
-                    NSLog("You pressed button two")
+                   // NSLog("You pressed button two")
                 } // 3
                 
                 alert.addAction(firstAction) // 4
