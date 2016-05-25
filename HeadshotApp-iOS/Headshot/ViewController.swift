@@ -43,10 +43,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       
-        
-   
         
         
         //scrollView
@@ -448,11 +444,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         currentPage = page
         
         // Work out which pages you want to load
-        let firstPage = page - 1
+        let firstPage = page-1;
         let lastPage = page + 1
         
         
-        // Purge anything before the first page
+        /*// Purge anything before the first page
         for var index = 0; index < firstPage; ++index {
             print("index : \(index)")
             purgePage(index)
@@ -467,6 +463,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Purge anything after the last page
         for var index = lastPage+1; index < pageImages.count; ++index {
             print("index ::: \(index)")
+            purgePage(index)
+        }*/
+        
+       //* // Purge anything before the first page
+        for index in -1 ... firstPage {
+            print("index1 : \(index)")
+            purgePage(index)
+        }
+        
+        // Load pages in our range
+        for index in firstPage ... lastPage {
+            print("index2 :: \(index)")
+            loadPage(index)
+        }
+        
+        // Purge anything after the last page
+        for index in lastPage ... pageImages.count {
+            print("index3 ::: \(index)")
             purgePage(index)
         }
     }
