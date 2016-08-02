@@ -10,6 +10,10 @@ import UIKit
 import AVFoundation
 import Social
 
+enum ShareError: ErrorType {
+    case ShareFail
+    case Other
+}
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
     
@@ -32,7 +36,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var xBtn : UIButton!
     @IBOutlet var saveBtn : UIButton!
     @IBOutlet var shareBtn : UIButton!
-    @IBOutlet var flashBtn : UIButton!
+    
     @IBOutlet var captureBtn : UIButton!
     
     
@@ -58,13 +62,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         pageImages = [UIImage(named:"CutOut1.png")!,
                       UIImage(named:"CutOut2.png")!,
                       UIImage(named:"CutOut3.png")!]
-        currentPage = 0
+        //currentPage = 0
         
         let pageCount = pageImages.count
-        
-        // 2
-        //pageControl.currentPage = 0
-        //pageControl.numberOfPages = pageCount
         
         // 3
         for _ in 0..<pageCount {
@@ -85,7 +85,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         saveBtn.hidden = true
         saveBtn.hidden = true
         shareBtn.hidden = true
-        flashBtn.hidden = false
+        
         captureBtn.hidden = false
         
         
@@ -98,28 +98,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    
-    @IBAction func flashPressed(sender: UIButton){
-        
-        if(isFlash){
-            flashBtn.setImage(UIImage(named: "flash_off"), forState: .Normal)
-            defaults.setBool(false, forKey: "flashState")
-            
-        }else{
-            flashBtn.setImage(UIImage(named: "flash_on"), forState: .Normal)
-            defaults.setBool(true, forKey: "flashState")
-        }
-        
-        
-    }
-    
     @IBAction func xPressed(sender: UIButton){
         //print("Release")
         xBtn.hidden = true
         saveBtn.hidden = true
         saveBtn.hidden = true
         shareBtn.hidden = true
-        flashBtn.hidden = false
         captureBtn.hidden = false
         scrollView.scrollEnabled = true
         
@@ -132,13 +116,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         saveBtn.hidden = false
         saveBtn.hidden = false
         shareBtn.hidden = false
-        flashBtn.hidden = true
         captureBtn.hidden = true
         scrollView.scrollEnabled = false
         didPressTakeAnother(false)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        print("MEMWarning")
         // Dispose of any resources that can be recreated.
     }
     
@@ -248,8 +232,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.tempImageView.image = image
                     self.tempImageView.hidden = false
                     
-                    
-                    
+                    autoreleasepool {
+                        self.composit = nil
+                        self.createComposit()
+                    }
                     
                 }
                 
@@ -260,9 +246,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
+    
     func createComposit(){
+        autoreleasepool {
         let bottomImage = self.tempImageView.image!
-        let topImage = self.pageImages[self.currentPage!]
+        
+
+        let width: CGFloat = scrollView.frame.size.width;
+        let num:CGFloat = (0.5 * width)
+        let page = NSInteger((num + scrollView.contentOffset.x) / width);
+        let topImage = self.pageImages[page]
         
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
@@ -280,7 +273,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         self.composit = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+        }
     }
     
     
@@ -304,33 +297,26 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
-    func flash(){
-        
-        
-    }
-    
-    
     
     //Shares photo and text
     @IBAction func sharePhoto(sender: UIButton) {
         
-        //print("share Photo")
-        
-        
         //let textToShare = "Check out the Headshot app in the App Store"
-        self.createComposit()
-        
+        autoreleasepool{
+       
         if let image = composit
         {
-            //image = UIImage(CGImage: image.CGImage!, scale: 1.0, orientation: .RightMirrored)
-            let objectsToShare = [image]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             
-            //New Excluded Activities Code
-            activityVC.excludedActivityTypes = [UIActivityTypeAirDrop, UIActivityTypeAddToReadingList]
+            guard let shrImg:Optional = [image as UIImage] else {
+                print("ERROR!")
+                return
+            }
             
+            let activityVC :UIActivityViewController = UIActivityViewController(activityItems: shrImg!, applicationActivities: nil)
+            activityVC.excludedActivityTypes = [UIActivityTypeAddToReadingList, UIActivityTypeMail, UIActivityTypePostToVimeo]
+            self.presentViewController(activityVC, animated: true, completion:nil)
             
-            self.presentViewController(activityVC, animated: true, completion: nil)
+
             if let _ = self.defaults.stringForKey("show") {
                 self.defaults.setValue("share", forKey: "show")
             }else{
@@ -338,17 +324,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 //Nothing stored in NSUserDefaults yet. Set a value.
                 self.defaults.setValue("share", forKey: "show")
             }
+
         }else{
             print("no image to save")
         }
+        }
         
     }
+    
+    
+
+
     
     //Saves composit to camera roll
     @IBAction func savePhoto(sender: UIButton){
         //print("saved Photo")
         
-        self.createComposit()
+        autoreleasepool{
         
         if let image = composit {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(ViewController.image(_:didFinishSavingWithError:contextInfo:)), nil)
@@ -362,6 +354,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             presentViewController(alert, animated: true, completion:nil) // 6*/
             
         } else { NSLog("Image save error: No image to save") }
+        }
         
     }
     
@@ -374,6 +367,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             NSLog("Error saving Image")
             //log the error out here ,if any
         }
+        
     }
     
     
@@ -427,8 +421,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
     }
     
-    func loadVisiblePages() {
-        
+    /*func loadVisiblePages() {
+        NSLog("load load ")
         // First, determine which page is currently visible
         let pageWidth = scrollView.frame.size.width
         let page = Int(floor((scrollView.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
@@ -438,11 +432,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         currentPage = page
         
         // Work out which pages you want to load
-        let firstPage = page-1;
+        let firstPage = page - 1;
         let lastPage = page + 1
         
         
-       //* // Purge anything before the first page
+        // Purge anything before the first page
         for index in -1 ... firstPage {
             purgePage(index)
         }
@@ -456,7 +450,39 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         for index in lastPage ... pageImages.count {
             purgePage(index)
         }
-    }
+    }*/
+ 
+ 
+ func loadVisiblePages() {
+ 
+         // First, determine which page is currently visible
+        let pageWidth = scrollView.frame.size.width
+        let page = Int(floor((scrollView.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
+ 
+         // Update the page control
+        //print(page)
+         currentPage = page
+ 
+         // Work out which pages you want to load
+         let firstPage = page - 1
+         let lastPage = page + 2
+ 
+ 
+         // Purge anything before the first page
+         for var index = 0; index < firstPage; ++index {
+             purgePage(index)
+         }
+ 
+         // Load pages in our range
+         for var index = firstPage; index <= lastPage; ++index {
+             loadPage(index)
+        }
+ 
+        // Purge anything after the last page
+         for var index = lastPage+1; index < pageImages.count; ++index {
+             purgePage(index)
+         }
+     }
     
     func beginingPopup(){
         if let show = self.defaults.stringForKey("show")  {

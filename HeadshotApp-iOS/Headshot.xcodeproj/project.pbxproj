@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AB9B0AD1A2D0D03B6E9A443B /* Pods_Headshot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9988D14E77C32C25FA1CA4FD /* Pods_Headshot.framework */; };
+		AB9B0AD1A2D0D03B6E9A443B /* Pods_Headshot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9988D14E77C32C25FA1CA4FD /* Pods_Headshot.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B944C7451BF3074B0066E000 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944C7441BF3074B0066E000 /* AppDelegate.swift */; };
 		B944C7471BF3074B0066E000 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B944C7461BF3074B0066E000 /* ViewController.swift */; };
 		B944C74A1BF3074C0066E000 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B944C7481BF3074C0066E000 /* Main.storyboard */; };
@@ -488,12 +488,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -505,12 +506,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Headshot/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MFS.Headshot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
